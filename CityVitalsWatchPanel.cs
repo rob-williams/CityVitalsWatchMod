@@ -10,9 +10,15 @@ using UnityEngine;
 
 public class CityVitalsWatchPanel : UIPanel {
 
-    private static readonly float controlHeight = 25f;
+    private static float WidthScale;
+    private static float HeightScale;
+    private static float PanelWidth = 275f;
+    private static float PanelHeight = 300f;
+    private static float DistanceFromBottom = 417f;
+    private static float ControlHeight = 25f;
 
     private UIView uiParent;
+    private UIPanel infoPanel;
 
     private UISlider electricityMeter;
     private UISlider waterMeter;
@@ -21,11 +27,19 @@ public class CityVitalsWatchPanel : UIPanel {
     private UISlider incineratorMeter;
 
     public override void Start() {
+        WidthScale = Screen.currentResolution.width / 1920f;
+        HeightScale = Screen.currentResolution.height / 1080f;
+        PanelWidth *= WidthScale;
+        PanelHeight *= HeightScale;
+        DistanceFromBottom *= HeightScale;
+        ControlHeight *= HeightScale;
         foreach (var uiView in GameObject.FindObjectsOfType<UIView>()) {
             if (uiView.name == "UIView") {
                 this.uiParent = uiView;
                 this.transform.parent = this.uiParent.transform;
-                this.relativePosition = new Vector3(1620f, 663f);
+                DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, Screen.currentResolution.width + "x" + Screen.currentResolution.height + ", " + WidthScale + "x" + HeightScale);
+                this.relativePosition = new Vector3(Screen.currentResolution.width - PanelWidth,
+                                                    Screen.currentResolution.height - DistanceFromBottom);
                 break;
             }
         }
@@ -36,8 +50,8 @@ public class CityVitalsWatchPanel : UIPanel {
         this.isVisible = true;
         this.canFocus = true;
         this.isInteractive = true;
-        this.width = 300;
-        this.height = 300;
+        this.width = PanelWidth;
+        this.height = PanelHeight;
 
         try {
             SetUpControls();
@@ -52,6 +66,13 @@ public class CityVitalsWatchPanel : UIPanel {
         base.Update();
 
         this.UpdateDisplay();
+
+        // This is required to make sure the bottom of the panel covers all controls
+        // incineratorMeter is the lowest control, so use that to test the bounds of the panel
+        var yBottom = this.infoPanel.relativePosition.y + this.incineratorMeter.relativePosition.y + this.incineratorMeter.height + (10f * HeightScale);
+        if (yBottom > this.position.y + this.height) {
+            this.height = yBottom;
+        }
     }
 
     private void SetUpControls() {
@@ -61,8 +82,17 @@ public class CityVitalsWatchPanel : UIPanel {
         dragHandleObject.transform.localPosition = Vector3.zero;
         var dragHandle = dragHandleObject.AddComponent<UIDragHandle>();
         dragHandle.width = this.width;
-        dragHandle.height = 40f;
-        dragHandle.zOrder = 100;
+        dragHandle.height = 40f * HeightScale;
+        dragHandle.zOrder = 1000;
+
+        // Create a resize handle for this panel
+        //var resizeHandleObject = new GameObject("Resize Handler");
+        //resizeHandleObject.transform.parent = this.transform;
+        //resizeHandleObject.transform.localPosition = Vector3.zero;
+        //var resizeHandle = resizeHandleObject.AddComponent<UIResizeHandle>();
+        //resizeHandle.width = this.width;
+        //resizeHandle.height = this.height;
+        //resizeHandle.zOrder = 1000;
 
         // Create a title for this panel
         var titleObject = new GameObject("Title");
@@ -70,24 +100,43 @@ public class CityVitalsWatchPanel : UIPanel {
         titleObject.transform.localPosition = Vector3.zero;
         var title = titleObject.AddComponent<UILabel>();
         title.text = "City Vitals";
+        title.textAlignment = UIHorizontalAlignment.Center;
 
         var electricityPanel = this.uiParent.GetComponentInChildren<ElectricityInfoViewPanel>();
 
         // Grab the electricity panel title and copy its font
         var electricityTitle = electricityPanel.Find<UILabel>("Label");
         title.font = electricityTitle.font;
-        this.PositionControl(title, -10f);
+        title.cachedTransform.parent = this.cachedTransform;
+        title.position = new Vector3((this.width / 2f) - (title.width / 2f), -10f * HeightScale, 0f);
 
-        float yOffset = -50f;
+        var controlPanelYPosition = title.position.y - (40f * HeightScale);
+
+        // Create a sub-panel to auto-position the info controls
+        var infoPanelObject = new GameObject("ControlPanel");
+        infoPanelObject.transform.parent = this.transform;
+        this.infoPanel = infoPanelObject.AddComponent<UIPanel>();
+        this.infoPanel.transform.localPosition = Vector3.zero;
+        this.infoPanel.width = this.width;
+        this.infoPanel.height = this.height + (this.position.y - controlPanelYPosition);
+        this.infoPanel.autoLayoutDirection = LayoutDirection.Vertical;
+        this.infoPanel.autoLayoutStart = LayoutStart.TopLeft;
+        var widthPadding = Mathf.RoundToInt(10 * WidthScale);
+        this.infoPanel.autoLayoutPadding = new RectOffset(widthPadding, widthPadding * 2, 0, Mathf.RoundToInt(10 * HeightScale));
+        this.infoPanel.autoLayout = true;
+        this.infoPanel.position = new Vector3(0f, controlPanelYPosition);
+        this.infoPanel.autoSize = true;
+
+        int zOrder = 1;
 
         // Set up electricity controls
         GameObject electricityAvailabilityLabelObject = new GameObject("ElectricityAvailability");
         var electricityAvailabilityLabel = electricityAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(electricityPanel.Find<UILabel>("ElectricityAvailability"), electricityAvailabilityLabel);
-        yOffset = this.PositionControl(electricityAvailabilityLabel, yOffset);
+        zOrder = this.SetUpInfoControl(electricityAvailabilityLabel, zOrder);
 
         this.electricityMeter = GameObject.Instantiate<UISlider>(electricityPanel.Find<UISlider>("ElectricityMeter"));
-        yOffset = this.PositionControl(this.electricityMeter, yOffset);
+        zOrder = this.SetUpInfoControl(this.electricityMeter, zOrder);
 
         var waterPanel = this.uiParent.GetComponentInChildren<WaterInfoViewPanel>();
 
@@ -95,18 +144,18 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject waterAvailabilityLabelObject = new GameObject("WaterAvailability");
         var waterAvailabilityLabel = waterAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(waterPanel.Find<UILabel>("WaterAvailability"), waterAvailabilityLabel);
-        yOffset = this.PositionControl(waterAvailabilityLabel, yOffset);
+        zOrder = this.SetUpInfoControl(waterAvailabilityLabel, zOrder);
 
         this.waterMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("WaterMeter"));
-        yOffset = this.PositionControl(this.waterMeter, yOffset);
+        zOrder = this.SetUpInfoControl(this.waterMeter, zOrder);
 
         GameObject sewageAvailabilityLabelObject = new GameObject("SewageAvailability");
         var sewageAvailabilityLabel = sewageAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(waterPanel.Find<UILabel>("SewageAvailability"), sewageAvailabilityLabel);
-        yOffset = this.PositionControl(sewageAvailabilityLabel, yOffset);
+        zOrder = this.SetUpInfoControl(sewageAvailabilityLabel, zOrder);
 
         this.sewageMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("SewageMeter"));
-        yOffset = this.PositionControl(this.sewageMeter, yOffset);
+        zOrder = this.SetUpInfoControl(this.sewageMeter, zOrder);
 
         var garbagePanel = this.uiParent.GetComponentInChildren<GarbageInfoViewPanel>();
 
@@ -114,27 +163,27 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject landfillUsageLabelObject = new GameObject("LandfillUsage");
         var landfillUsageLabel = landfillUsageLabelObject.AddComponent<UILabel>();
         this.CopyLabel(garbagePanel.Find<UILabel>("LandfillUsage"), landfillUsageLabel);
-        yOffset = this.PositionControl(landfillUsageLabel, yOffset);
+        zOrder = this.SetUpInfoControl(landfillUsageLabel, zOrder);
 
         this.landfillMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("LandfillMeter"));
-        yOffset = this.PositionControl(this.landfillMeter, yOffset);
+        zOrder = this.SetUpInfoControl(this.landfillMeter, zOrder);
 
         GameObject incinerationStatusLabelObject = new GameObject("IncinerationStatus");
         var incinerationStatusLabel = incinerationStatusLabelObject.AddComponent<UILabel>();
         this.CopyLabel(garbagePanel.Find<UILabel>("IncinerationStatus"), incinerationStatusLabel);
-        yOffset = this.PositionControl(incinerationStatusLabel, yOffset);
+        zOrder = this.SetUpInfoControl(incinerationStatusLabel, zOrder);
 
         this.incineratorMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("IncineratorMeter"));
-        yOffset = this.PositionControl(this.incineratorMeter, yOffset);
+        zOrder = this.SetUpInfoControl(this.incineratorMeter, zOrder);
     }
 
-    private float PositionControl(UIComponent control, float yOffset) {
-        control.cachedTransform.parent = this.transform;
-        DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, control.name + " - " + (control.cachedTransform.parent == null) + ", " + (control.cachedTransform.parent == this.transform));
-        DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, control.name + " - width: " + control.width + ", height: " + control.height + ", yOffset: " + yOffset + ", relative position: " + control.position);
-        control.position = new Vector3((this.width / 2f) - (control.width / 2f), yOffset, 0f);
-        DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, control.name + " - width: " + control.width + ", height: " + control.height + ", yOffset: " + yOffset + ", relative position: " + control.position);
-        return yOffset - controlHeight;
+    private int SetUpInfoControl(UIComponent control, int zOrder) {
+        control.cachedTransform.parent = this.infoPanel.transform;
+        control.height *= HeightScale;
+        control.width *= WidthScale;
+        control.autoSize = true;
+        control.zOrder = zOrder;
+        return zOrder + 1;
     }
 
     private void CopyLabel(UILabel source, UILabel target) {
