@@ -9,8 +9,8 @@ public class CityVitalsWatchPanel : UIPanel {
     private static float WidthScale;
     private static float HeightScale;
     private static float PanelWidth = 275f;
-    private static float PanelHeight = 300f;
-    private static float DistanceFromBottom = 417f;
+    private static float PanelHeight = 400f;
+    private static float DistanceFromBottom = 517f;
     private static float ControlHeight = 25f;
 
     private bool previousContainsMouse = true;
@@ -22,6 +22,8 @@ public class CityVitalsWatchPanel : UIPanel {
     private UISlider sewageMeter;
     private UISlider landfillMeter;
     private UISlider incineratorMeter;
+    private UISlider cemeteryMeter;
+    private UISlider crematoriumMeter;
 
     public override void Start() {
         WidthScale = 1f;//Screen.currentResolution.width / 1920f;
@@ -62,26 +64,26 @@ public class CityVitalsWatchPanel : UIPanel {
     public override void Update() {
         base.Update();
 
-        // This is required to make sure the bottom of the panel covers all controls
-        // incineratorMeter is the lowest control, so use that to test the bounds of the panel
-        var yBottom = this.infoPanel.position.y + this.incineratorMeter.position.y + this.incineratorMeter.height + (10f * HeightScale);
-        if (yBottom > this.position.y + this.height) {
-            //DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, yBottom + ", " + this.height + ", " + this.infoPanel.position.y + ", " + this.incineratorMeter.position.y + ", " + this.incineratorMeter.height);
-            this.height = yBottom;
-        }
-
         if (this.previousContainsMouse != this.containsMouse) {
             this.previousContainsMouse = this.containsMouse;
             this.opacity = this.containsMouse ? 1f : 0.4f;
         }
 
-        foreach (UIComponent control in this.infoPanel.GetComponentsInChildren<UIComponent>()) {
-            if (control != this.infoPanel && !control.cachedTransform.parent.GetComponent<UISlider>()) {
-                Vector3 controlPosition = control.position;
-                controlPosition.x = (this.width / 2f) - (control.width / 2f);
-                control.position = controlPosition;
-            }
-        }
+        // This is required to make sure the bottom of the panel covers all controls
+        // incineratorMeter is the lowest control, so use that to test the bounds of the panel
+        //var yBottom = this.infoPanel.position.y + this.incineratorMeter.position.y + this.incineratorMeter.height + (10f * HeightScale);
+        //if (yBottom > this.position.y + this.height) {
+        //    //DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, yBottom + ", " + this.height + ", " + this.infoPanel.position.y + ", " + this.incineratorMeter.position.y + ", " + this.incineratorMeter.height);
+        //    this.height = yBottom;
+        //}
+
+        //foreach (UIComponent control in this.infoPanel.GetComponentsInChildren<UIComponent>()) {
+        //    if (control != this.infoPanel && !control.cachedTransform.parent.GetComponent<UISlider>()) {
+        //        Vector3 controlPosition = control.position;
+        //        controlPosition.x = (this.width / 2f) - (control.width / 2f);
+        //        control.position = controlPosition;
+        //    }
+        //}
 
         this.UpdateDisplay();
     }
@@ -132,7 +134,7 @@ public class CityVitalsWatchPanel : UIPanel {
         this.infoPanel.height = this.height + (this.position.y - controlPanelYPosition);
         this.infoPanel.autoLayoutDirection = LayoutDirection.Vertical;
         this.infoPanel.autoLayoutStart = LayoutStart.TopLeft;
-        var widthPadding = Mathf.RoundToInt(10 * WidthScale);
+        var widthPadding = Mathf.RoundToInt(8 * WidthScale);
         this.infoPanel.autoLayoutPadding = new RectOffset(widthPadding, widthPadding * 2, 0, Mathf.RoundToInt(10 * HeightScale));
         this.infoPanel.autoLayout = true;
         this.infoPanel.position = new Vector3(0f, controlPanelYPosition);
@@ -186,6 +188,25 @@ public class CityVitalsWatchPanel : UIPanel {
 
         this.incineratorMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("IncineratorMeter"));
         zOrder = this.SetUpInfoControl(this.incineratorMeter, zOrder);
+
+        var healthPanel = this.uiParent.GetComponentInChildren<HealthInfoViewPanel>();
+
+        // Set up cemetery and crematorium controls
+        GameObject cemeteryUsageLabelObject = new GameObject("CemetaryUsage");
+        var cemeteryUsageLabel = cemeteryUsageLabelObject.AddComponent<UILabel>();
+        this.CopyLabel(healthPanel.Find<UILabel>("CemetaryUsage"), cemeteryUsageLabel);
+        zOrder = this.SetUpInfoControl(cemeteryUsageLabel, zOrder);
+
+        this.cemeteryMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
+        zOrder = this.SetUpInfoControl(this.cemeteryMeter, zOrder);
+
+        GameObject crematoriumAvailabilityLabelObject = new GameObject("Incinerator");
+        var crematoriumAvailabilityLabel = crematoriumAvailabilityLabelObject.AddComponent<UILabel>();
+        this.CopyLabel(healthPanel.Find<UILabel>("Incinerator"), crematoriumAvailabilityLabel);
+        zOrder = this.SetUpInfoControl(crematoriumAvailabilityLabel, zOrder);
+
+        this.crematoriumMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("DeathcareMeter"));
+        zOrder = this.SetUpInfoControl(this.crematoriumMeter, zOrder);
     }
 
     private int SetUpInfoControl(UIComponent control, int zOrder) {
@@ -200,6 +221,7 @@ public class CityVitalsWatchPanel : UIPanel {
     private void CopyLabel(UILabel source, UILabel target) {
         target.font = source.font;
         target.text = source.text;
+        target.color = source.color;
     }
 
     private void UpdateDisplay() {
@@ -213,6 +235,10 @@ public class CityVitalsWatchPanel : UIPanel {
         int garbageAmount = 0;
         int incinerationCapacity = 0;
         int garbageAccumulation = 0;
+        int deadCapacity = 0;
+        int deadAmount = 0;
+        int cremateCapacity = 0;
+        int deadCount = 0;
 
         if (Singleton<DistrictManager>.exists) {
             electricityCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetElectricityCapacity();
@@ -225,6 +251,10 @@ public class CityVitalsWatchPanel : UIPanel {
             garbageAmount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetGarbageAmount();
             incinerationCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetIncinerationCapacity();
             garbageAccumulation = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetGarbageAccumulation();
+            deadCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadCapacity();
+            deadAmount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadAmount();
+            cremateCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetCremateCapacity();
+            deadCount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadCount();
         }
 
         this.electricityMeter.value = this.GetPercentage(electricityCapacity, electricityConsumption);
@@ -253,6 +283,18 @@ public class CityVitalsWatchPanel : UIPanel {
             "{0} / {1}",
             garbageAccumulation.ToString("#,#", CultureInfo.InvariantCulture),
             incinerationCapacity == 0 ? "0" : incinerationCapacity.ToString("#,#", CultureInfo.InvariantCulture));
+        if (deadCapacity > 0) {
+            this.cemeteryMeter.value = (deadAmount / (float)deadCapacity) * 100f;
+        }
+        else {
+            this.cemeteryMeter.value = 0f;
+        }
+        this.cemeteryMeter.tooltip = this.cemeteryMeter.value + "%";
+        this.crematoriumMeter.value = this.GetPercentage(cremateCapacity, deadCount);
+        this.crematoriumMeter.tooltip = string.Format(
+            "{0} / {1}",
+            deadCount == 0 ? "0" : deadCount.ToString("#,#", CultureInfo.InvariantCulture),
+            cremateCapacity == 0 ? "0" : cremateCapacity.ToString("#,#", CultureInfo.InvariantCulture));
     }
 
     private float GetPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
