@@ -59,8 +59,6 @@ public class CityVitalsWatchPanel : UIPanel {
     public override void Update() {
         base.Update();
 
-        this.UpdateDisplay();
-
         // This is required to make sure the bottom of the panel covers all controls
         // incineratorMeter is the lowest control, so use that to test the bounds of the panel
         var yBottom = this.infoPanel.position.y + this.incineratorMeter.position.y + this.incineratorMeter.height + (10f * HeightScale);
@@ -68,6 +66,16 @@ public class CityVitalsWatchPanel : UIPanel {
             //DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, yBottom + ", " + this.height + ", " + this.infoPanel.position.y + ", " + this.incineratorMeter.position.y + ", " + this.incineratorMeter.height);
             this.height = yBottom;
         }
+
+        foreach (UIComponent control in this.infoPanel.GetComponentsInChildren<UIComponent>()) {
+            if (control != this.infoPanel && !control.cachedTransform.parent.GetComponent<UISlider>()) {
+                Vector3 controlPosition = control.position;
+                controlPosition.x = (this.width / 2f) - (control.width / 2f);
+                control.position = controlPosition;
+            }
+        }
+
+        this.UpdateDisplay();
     }
 
     private void SetUpControls() {
