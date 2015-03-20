@@ -12,6 +12,7 @@ public class CityVitalsWatchPanel : UIPanel {
     private static float DistanceFromBottom = 417f;
     private static float ControlHeight = 25f;
 
+    private bool previousContainsMouse = true;
     private UIView uiParent;
     private UIPanel infoPanel;
 
@@ -65,6 +66,11 @@ public class CityVitalsWatchPanel : UIPanel {
         if (yBottom > this.position.y + this.height) {
             //DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, yBottom + ", " + this.height + ", " + this.infoPanel.position.y + ", " + this.incineratorMeter.position.y + ", " + this.incineratorMeter.height);
             this.height = yBottom;
+        }
+
+        if (this.previousContainsMouse != this.containsMouse) {
+            this.previousContainsMouse = this.containsMouse;
+            this.opacity = this.containsMouse ? 1f : 0.4f;
         }
 
         foreach (UIComponent control in this.infoPanel.GetComponentsInChildren<UIComponent>()) {
