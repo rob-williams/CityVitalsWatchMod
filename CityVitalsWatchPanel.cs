@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ColossalFramework;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using UnityEngine;
 
@@ -37,7 +32,6 @@ public class CityVitalsWatchPanel : UIPanel {
             if (uiView.name == "UIView") {
                 this.uiParent = uiView;
                 this.transform.parent = this.uiParent.transform;
-                DebugOutputPanel.AddMessage(ColossalFramework.Plugins.PluginManager.MessageType.Message, Screen.currentResolution.width + "x" + Screen.currentResolution.height + ", " + WidthScale + "x" + HeightScale);
                 this.relativePosition = new Vector3(Screen.currentResolution.width - PanelWidth,
                                                     Screen.currentResolution.height - DistanceFromBottom);
                 break;

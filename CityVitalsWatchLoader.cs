@@ -1,13 +1,8 @@
 ﻿namespace CityVitalsWatch {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using ColossalFramework.UI;
     using ICities;
     using UnityEngine;
-    using ColossalFramework.UI;
     public class CityVitalsWatchLoader : ILoadingExtension {
 
         private static CityVitalsWatchPanel panel = null;
