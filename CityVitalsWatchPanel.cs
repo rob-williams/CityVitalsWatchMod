@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using ColossalFramework;
 using ColossalFramework.UI;
 using UnityEngine;
@@ -33,8 +34,9 @@ public class CityVitalsWatchPanel : UIPanel {
             if (uiView.name == "UIView") {
                 this.uiParent = uiView;
                 this.transform.parent = this.uiParent.transform;
-                this.relativePosition = new Vector3(Screen.currentResolution.width - PanelWidth,
-                                                    Screen.currentResolution.height - DistanceFromBottom);
+                this.relativePosition = new Vector3(
+                    Screen.currentResolution.width - PanelWidth,
+                    Screen.currentResolution.height - DistanceFromBottom);
                 break;
             }
         }
@@ -226,15 +228,31 @@ public class CityVitalsWatchPanel : UIPanel {
         }
 
         this.electricityMeter.value = this.GetPercentage(electricityCapacity, electricityConsumption);
+        this.electricityMeter.tooltip = string.Format(
+            "{0} / {1}",
+            Mathf.RoundToInt(electricityConsumption / 1000f),
+            Mathf.RoundToInt(electricityCapacity / 1000f));
         this.waterMeter.value = this.GetPercentage(waterCapacity, waterConsumption);
+        this.waterMeter.tooltip = string.Format("{0} / {1}",
+            waterConsumption.ToString("#,#", CultureInfo.InvariantCulture),
+            waterCapacity.ToString("#,#", CultureInfo.InvariantCulture));
         this.sewageMeter.value = this.GetPercentage(sewageCapacity, sewageAccumulation);
+        this.sewageMeter.tooltip = string.Format(
+            "{0} / {1}",
+            sewageAccumulation.ToString("#,#", CultureInfo.InvariantCulture),
+            sewageCapacity.ToString("#,#", CultureInfo.InvariantCulture));
         if (garbageCapacity > 0) {
             this.landfillMeter.value = (garbageAmount / (float)garbageCapacity) * 100f;
         }
         else {
             this.landfillMeter.value = 0f;
         }
+        this.landfillMeter.tooltip = this.landfillMeter.value + "%";
         this.incineratorMeter.value = this.GetPercentage(incinerationCapacity, garbageAccumulation);
+        this.incineratorMeter.tooltip = string.Format(
+            "{0} / {1}",
+            garbageAccumulation.ToString("#,#", CultureInfo.InvariantCulture),
+            incinerationCapacity == 0 ? "0" : incinerationCapacity.ToString("#,#", CultureInfo.InvariantCulture));
     }
 
     private float GetPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
