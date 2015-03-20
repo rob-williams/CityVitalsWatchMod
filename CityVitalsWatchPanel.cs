@@ -24,8 +24,8 @@ public class CityVitalsWatchPanel : UIPanel {
     private UISlider incineratorMeter;
 
     public override void Start() {
-        WidthScale = Screen.currentResolution.width / 1920f;
-        HeightScale = Screen.currentResolution.height / 1080f;
+        WidthScale = 1f;//Screen.currentResolution.width / 1920f;
+        HeightScale = 1f;//Screen.currentResolution.height / 1080f;
         PanelWidth *= WidthScale;
         PanelHeight *= HeightScale;
         DistanceFromBottom *= HeightScale;
