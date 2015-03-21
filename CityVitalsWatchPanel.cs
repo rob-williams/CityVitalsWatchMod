@@ -123,21 +123,19 @@ public class CityVitalsWatchPanel : UIPanel {
         title.cachedTransform.parent = this.cachedTransform;
         title.position = new Vector3((this.width / 2f) - (title.width / 2f), -10f * HeightScale, 0f);
 
-        var controlPanelYPosition = title.position.y - (40f * HeightScale);
-
         // Create a sub-panel to auto-position the info controls
         var infoPanelObject = new GameObject("ControlPanel");
         infoPanelObject.transform.parent = this.transform;
         this.infoPanel = infoPanelObject.AddComponent<UIPanel>();
         this.infoPanel.transform.localPosition = Vector3.zero;
         this.infoPanel.width = this.width;
-        this.infoPanel.height = this.height + (this.position.y - controlPanelYPosition);
+        this.infoPanel.height = this.height - (40f * HeightScale);
         this.infoPanel.autoLayoutDirection = LayoutDirection.Vertical;
         this.infoPanel.autoLayoutStart = LayoutStart.TopLeft;
         var widthPadding = Mathf.RoundToInt(8 * WidthScale);
         this.infoPanel.autoLayoutPadding = new RectOffset(widthPadding, widthPadding * 2, 0, Mathf.RoundToInt(10 * HeightScale));
         this.infoPanel.autoLayout = true;
-        this.infoPanel.position = new Vector3(0f, controlPanelYPosition);
+        this.infoPanel.relativePosition = new Vector3(0f, 45f * HeightScale);
         this.infoPanel.autoSize = true;
 
         int zOrder = 1;

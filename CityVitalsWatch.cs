@@ -2,6 +2,8 @@
 {
     using ICities;
 
+    // Path to Workshop folder: C:\Program Files (x86)\Steam\SteamApps\workshop\content\255710\410151616
+
     public class CityVitalsWatch : IUserMod {
 
         public string Name {
