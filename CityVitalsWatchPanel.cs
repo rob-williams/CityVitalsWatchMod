@@ -9,7 +9,7 @@ public class CityVitalsWatchPanel : UIPanel {
     private static float WidthScale;
     private static float HeightScale;
     private static float PanelWidth = 275f;
-    private static float PanelHeight = 400f;
+    private static float PanelHeight = 370f;
     private static float DistanceFromLeft = 10f;
     private static float DistanceFromTop = 65f;
     private static float ControlHeight = 25f;
@@ -25,6 +25,7 @@ public class CityVitalsWatchPanel : UIPanel {
     private UISlider incineratorMeter;
     private UISlider cemeteryMeter;
     private UISlider crematoriumMeter;
+    private UISlider employmentMeter;
 
     public override void Start() {
         WidthScale = 1f;//Screen.currentResolution.width / 1920f;
@@ -131,7 +132,7 @@ public class CityVitalsWatchPanel : UIPanel {
         this.infoPanel.autoLayoutDirection = LayoutDirection.Vertical;
         this.infoPanel.autoLayoutStart = LayoutStart.TopLeft;
         var widthPadding = Mathf.RoundToInt(8 * WidthScale);
-        this.infoPanel.autoLayoutPadding = new RectOffset(widthPadding, widthPadding * 2, 0, Mathf.RoundToInt(10 * HeightScale));
+        this.infoPanel.autoLayoutPadding = new RectOffset(widthPadding, widthPadding * 2, 0, Mathf.RoundToInt(5 * HeightScale));
         this.infoPanel.autoLayout = true;
         this.infoPanel.relativePosition = new Vector3(0f, 45f * HeightScale);
         this.infoPanel.autoSize = true;
@@ -203,6 +204,16 @@ public class CityVitalsWatchPanel : UIPanel {
 
         this.crematoriumMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("DeathcareMeter"));
         zOrder = this.SetUpInfoControl(this.crematoriumMeter, zOrder);
+
+        // Set up unemployment controls
+        GameObject employmentLabelObject = new GameObject("Employment");
+        var employmentLabel = employmentLabelObject.AddComponent<UILabel>();
+        employmentLabel.font = title.font;
+        employmentLabel.localeID = "STATS_9";
+        zOrder = this.SetUpInfoControl(employmentLabel, zOrder);
+
+        this.employmentMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
+        zOrder = this.SetUpInfoControl(this.employmentMeter, zOrder);
     }
 
     private int SetUpInfoControl(UIComponent control, int zOrder) {
@@ -216,7 +227,7 @@ public class CityVitalsWatchPanel : UIPanel {
 
     private void CopyLabel(UILabel source, UILabel target) {
         target.font = source.font;
-        target.text = source.text;
+        target.localeID = source.localeID;
         target.color = source.color;
     }
 
@@ -235,22 +246,25 @@ public class CityVitalsWatchPanel : UIPanel {
         int deadAmount = 0;
         int cremateCapacity = 0;
         int deadCount = 0;
+        float unemployment = 0f;
 
         if (Singleton<DistrictManager>.exists) {
-            electricityCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetElectricityCapacity();
-            electricityConsumption = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetElectricityConsumption();
-            waterCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetWaterCapacity();
-            waterConsumption = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetWaterConsumption();
-            sewageCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetSewageCapacity();
-            sewageAccumulation = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetSewageAccumulation();
-            garbageCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetGarbageCapacity();
-            garbageAmount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetGarbageAmount();
-            incinerationCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetIncinerationCapacity();
-            garbageAccumulation = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetGarbageAccumulation();
-            deadCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadCapacity();
-            deadAmount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadAmount();
-            cremateCapacity = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetCremateCapacity();
-            deadCount = Singleton<DistrictManager>.instance.m_districts.m_buffer[0].GetDeadCount();
+            var info = Singleton<DistrictManager>.instance.m_districts.m_buffer[0];
+            electricityCapacity = info.GetElectricityCapacity();
+            electricityConsumption = info.GetElectricityConsumption();
+            waterCapacity = info.GetWaterCapacity();
+            waterConsumption = info.GetWaterConsumption();
+            sewageCapacity = info.GetSewageCapacity();
+            sewageAccumulation = info.GetSewageAccumulation();
+            garbageCapacity = info.GetGarbageCapacity();
+            garbageAmount = info.GetGarbageAmount();
+            incinerationCapacity = info.GetIncinerationCapacity();
+            garbageAccumulation = info.GetGarbageAccumulation();
+            deadCapacity = info.GetDeadCapacity();
+            deadAmount = info.GetDeadAmount();
+            cremateCapacity = info.GetCremateCapacity();
+            deadCount = info.GetDeadCount();
+            unemployment = info.GetUnemployment();
         }
 
         this.electricityMeter.value = this.GetPercentage(electricityCapacity, electricityConsumption);
@@ -291,6 +305,8 @@ public class CityVitalsWatchPanel : UIPanel {
             "{0} / {1}",
             deadCount == 0 ? "0" : deadCount.ToString("#,#", CultureInfo.InvariantCulture),
             cremateCapacity == 0 ? "0" : cremateCapacity.ToString("#,#", CultureInfo.InvariantCulture));
+        this.employmentMeter.value = Mathf.Round(100f - unemployment);
+        this.employmentMeter.tooltip = this.employmentMeter.value + "%";
     }
 
     private float GetPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
