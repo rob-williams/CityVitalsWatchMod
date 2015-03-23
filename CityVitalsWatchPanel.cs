@@ -10,7 +10,8 @@ public class CityVitalsWatchPanel : UIPanel {
     private static float HeightScale;
     private static float PanelWidth = 275f;
     private static float PanelHeight = 400f;
-    private static float DistanceFromBottom = 517f;
+    private static float DistanceFromLeft = 10f;
+    private static float DistanceFromTop = 65f;
     private static float ControlHeight = 25f;
 
     private bool previousContainsMouse = true;
@@ -30,15 +31,12 @@ public class CityVitalsWatchPanel : UIPanel {
         HeightScale = 1f;//Screen.currentResolution.height / 1080f;
         PanelWidth *= WidthScale;
         PanelHeight *= HeightScale;
-        DistanceFromBottom *= HeightScale;
         ControlHeight *= HeightScale;
         foreach (var uiView in GameObject.FindObjectsOfType<UIView>()) {
             if (uiView.name == "UIView") {
                 this.uiParent = uiView;
                 this.transform.parent = this.uiParent.transform;
-                this.relativePosition = new Vector3(
-                    Screen.currentResolution.width - PanelWidth,
-                    Screen.currentResolution.height - DistanceFromBottom);
+                this.relativePosition = new Vector3(DistanceFromLeft, DistanceFromTop);
                 break;
             }
         }
