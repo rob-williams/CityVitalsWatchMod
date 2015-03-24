@@ -5,7 +5,7 @@ using ColossalFramework.UI;
 using UnityEngine;
 
 public class CityVitalsWatchPanel : UIPanel {
-
+    
     private static float WidthScale;
     private static float HeightScale;
     private static float PanelWidth = 275f;
@@ -16,6 +16,8 @@ public class CityVitalsWatchPanel : UIPanel {
 
     private bool previousContainsMouse = true;
     private UIView uiParent;
+    private UIButton optionsButton;
+    private UIButton toggleButton;
     private UIPanel infoPanel;
 
     private UISlider electricityMeter;
@@ -61,23 +63,44 @@ public class CityVitalsWatchPanel : UIPanel {
     }
 
     public override void Update() {
+        // The base Update must be called to lay out controls
         base.Update();
 
+        // Toggle the panel's visibility when Alt-V is pressed
         if (Input.GetKeyDown(KeyCode.V) && (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))) {
             this.isVisible = !this.isVisible;
         }
 
+        // Position the toggle button each frame to make sure it stays in the correct spot during resolution changes
+        this.toggleButton.position = this.optionsButton.position - new Vector3(this.optionsButton.width, (this.optionsButton.height - this.toggleButton.height) / 2f, 0f);
+
+        // Update panel opacity and displayed stats if visible
         if (this.isVisible) {
             if (this.previousContainsMouse != this.containsMouse) {
                 this.previousContainsMouse = this.containsMouse;
                 this.opacity = this.containsMouse ? 1f : 0.4f;
             }
-
+            
             this.UpdateDisplay();
         }
     }
 
     private void SetUpControls() {
+        // First, create the button to toggle this panel and position it near the options button
+        this.optionsButton = this.uiParent.FindUIComponent<UIButton>("Esc");
+        var toolButtonObject = new GameObject("CityVitalsWatchButton");
+        toolButtonObject.transform.parent = this.uiParent.transform;
+        toolButtonObject.transform.localPosition = Vector3.zero;
+        this.toggleButton = toolButtonObject.AddComponent<UIButton>();
+        this.toggleButton.normalBgSprite = "ButtonMenu";
+        this.toggleButton.hoveredBgSprite = "ButtonMenuHovered";
+        this.toggleButton.pressedBgSprite = "ButtonMenuPressed";
+        this.toggleButton.normalFgSprite = "ThumbStatistics";
+        this.toggleButton.width = 33f;
+        this.toggleButton.height = 33f;
+        this.toggleButton.tooltip = "City Vitals";
+        this.toggleButton.eventClick += OnToggleButtonClick;
+        
         // Create a drag handle for this panel
         var dragHandleObject = new GameObject("DragHandler");
         dragHandleObject.transform.parent = this.transform;
@@ -96,6 +119,19 @@ public class CityVitalsWatchPanel : UIPanel {
         //resizeHandle.height = this.height;
         //resizeHandle.zOrder = 1000;
 
+        // Create a close button for this panel
+        var closeButtonObject = new GameObject("CloseButton");
+        closeButtonObject.transform.parent = this.transform;
+        closeButtonObject.transform.localPosition = Vector3.zero;
+        var closeButton = closeButtonObject.AddComponent<UIButton>();
+        closeButton.width = 32f;
+        closeButton.height = 32f;
+        closeButton.normalBgSprite = "buttonclose";
+        closeButton.hoveredBgSprite = "buttonclosehover";
+        closeButton.pressedBgSprite = "buttonclosepressed";
+        closeButton.position = new Vector3(this.width - closeButton.width, -2f, 0f);
+        closeButton.eventClick += this.OnCloseButtonClick;
+
         // Create a title for this panel
         var titleObject = new GameObject("Title");
         titleObject.transform.parent = this.transform;
@@ -108,8 +144,10 @@ public class CityVitalsWatchPanel : UIPanel {
 
         // Grab the electricity panel title and copy its font
         var electricityTitle = electricityPanel.Find<UILabel>("Label");
-        title.font = electricityTitle.font;
-        title.cachedTransform.parent = this.cachedTransform;
+        var titleFont = electricityTitle.font;
+
+        // Set title font and position the title control
+        title.font = titleFont;
         title.position = new Vector3((this.width / 2f) - (title.width / 2f), -10f * HeightScale, 0f);
 
         // Create a sub-panel to auto-position the info controls
@@ -204,6 +242,14 @@ public class CityVitalsWatchPanel : UIPanel {
 
         this.employmentMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
         zOrder = this.SetUpInfoControl(this.employmentMeter, zOrder);
+    }
+
+    void OnToggleButtonClick(UIComponent component, UIMouseEventParameter eventParam) {
+        this.isVisible = !this.isVisible;
+    }
+
+    private void OnCloseButtonClick(UIComponent component, UIMouseEventParameter eventParam) {
+        this.isVisible = false;
     }
 
     private int SetUpInfoControl(UIComponent control, int zOrder) {
