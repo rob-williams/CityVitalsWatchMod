@@ -4,6 +4,9 @@ using ColossalFramework;
 using ColossalFramework.UI;
 using UnityEngine;
 
+/// <summary>
+/// The City Vitals Watch panel component, responsible for creating and updating all visible controls.
+/// </summary>
 public class CityVitalsWatchPanel : UIPanel {
     
     private static float WidthScale;
@@ -29,6 +32,9 @@ public class CityVitalsWatchPanel : UIPanel {
     private UISlider crematoriumMeter;
     private UISlider employmentMeter;
 
+    /// <summary>
+    /// Called before the first frame after the panel is created.
+    /// </summary>
     public override void Start() {
         WidthScale = 1f;//Screen.currentResolution.width / 1920f;
         HeightScale = 1f;//Screen.currentResolution.height / 1080f;
@@ -62,6 +68,9 @@ public class CityVitalsWatchPanel : UIPanel {
         }
     }
 
+    /// <summary>
+    /// Called every frame the panel is active.
+    /// </summary>
     public override void Update() {
         // The base Update must be called to lay out controls
         base.Update();
@@ -85,6 +94,18 @@ public class CityVitalsWatchPanel : UIPanel {
         }
     }
 
+    /// <summary>
+    /// Called when the panel is destroyed.
+    /// </summary>
+    public override void OnDestroy() {
+        base.OnDestroy();
+
+        GameObject.Destroy(this.toggleButton.gameObject);
+    }
+
+    /// <summary>
+    /// Creates, positions, and styles all panel controls, as well as the toggle button in the main UI.
+    /// </summary>
     private void SetUpControls() {
         // First, create the button to toggle this panel and position it near the options button
         this.optionsButton = this.uiParent.FindUIComponent<UIButton>("Esc");
@@ -171,10 +192,10 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject electricityAvailabilityLabelObject = new GameObject("ElectricityAvailability");
         var electricityAvailabilityLabel = electricityAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(electricityPanel.Find<UILabel>("ElectricityAvailability"), electricityAvailabilityLabel);
-        zOrder = this.SetUpInfoControl(electricityAvailabilityLabel, zOrder);
+        zOrder = this.PositionInfoControl(electricityAvailabilityLabel, zOrder);
 
         this.electricityMeter = GameObject.Instantiate<UISlider>(electricityPanel.Find<UISlider>("ElectricityMeter"));
-        zOrder = this.SetUpInfoControl(this.electricityMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.electricityMeter, zOrder);
 
         var waterPanel = this.uiParent.GetComponentInChildren<WaterInfoViewPanel>();
 
@@ -182,18 +203,18 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject waterAvailabilityLabelObject = new GameObject("WaterAvailability");
         var waterAvailabilityLabel = waterAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(waterPanel.Find<UILabel>("WaterAvailability"), waterAvailabilityLabel);
-        zOrder = this.SetUpInfoControl(waterAvailabilityLabel, zOrder);
+        zOrder = this.PositionInfoControl(waterAvailabilityLabel, zOrder);
 
         this.waterMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("WaterMeter"));
-        zOrder = this.SetUpInfoControl(this.waterMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.waterMeter, zOrder);
 
         GameObject sewageAvailabilityLabelObject = new GameObject("SewageAvailability");
         var sewageAvailabilityLabel = sewageAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(waterPanel.Find<UILabel>("SewageAvailability"), sewageAvailabilityLabel);
-        zOrder = this.SetUpInfoControl(sewageAvailabilityLabel, zOrder);
+        zOrder = this.PositionInfoControl(sewageAvailabilityLabel, zOrder);
 
         this.sewageMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("SewageMeter"));
-        zOrder = this.SetUpInfoControl(this.sewageMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.sewageMeter, zOrder);
 
         var garbagePanel = this.uiParent.GetComponentInChildren<GarbageInfoViewPanel>();
 
@@ -201,18 +222,18 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject landfillUsageLabelObject = new GameObject("LandfillUsage");
         var landfillUsageLabel = landfillUsageLabelObject.AddComponent<UILabel>();
         this.CopyLabel(garbagePanel.Find<UILabel>("LandfillUsage"), landfillUsageLabel);
-        zOrder = this.SetUpInfoControl(landfillUsageLabel, zOrder);
+        zOrder = this.PositionInfoControl(landfillUsageLabel, zOrder);
 
         this.landfillMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("LandfillMeter"));
-        zOrder = this.SetUpInfoControl(this.landfillMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.landfillMeter, zOrder);
 
         GameObject incinerationStatusLabelObject = new GameObject("IncinerationStatus");
         var incinerationStatusLabel = incinerationStatusLabelObject.AddComponent<UILabel>();
         this.CopyLabel(garbagePanel.Find<UILabel>("IncinerationStatus"), incinerationStatusLabel);
-        zOrder = this.SetUpInfoControl(incinerationStatusLabel, zOrder);
+        zOrder = this.PositionInfoControl(incinerationStatusLabel, zOrder);
 
         this.incineratorMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("IncineratorMeter"));
-        zOrder = this.SetUpInfoControl(this.incineratorMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.incineratorMeter, zOrder);
 
         var healthPanel = this.uiParent.GetComponentInChildren<HealthInfoViewPanel>();
 
@@ -220,39 +241,55 @@ public class CityVitalsWatchPanel : UIPanel {
         GameObject cemeteryUsageLabelObject = new GameObject("CemetaryUsage");
         var cemeteryUsageLabel = cemeteryUsageLabelObject.AddComponent<UILabel>();
         this.CopyLabel(healthPanel.Find<UILabel>("CemetaryUsage"), cemeteryUsageLabel);
-        zOrder = this.SetUpInfoControl(cemeteryUsageLabel, zOrder);
+        zOrder = this.PositionInfoControl(cemeteryUsageLabel, zOrder);
 
         this.cemeteryMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
-        zOrder = this.SetUpInfoControl(this.cemeteryMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.cemeteryMeter, zOrder);
 
         GameObject crematoriumAvailabilityLabelObject = new GameObject("Incinerator");
         var crematoriumAvailabilityLabel = crematoriumAvailabilityLabelObject.AddComponent<UILabel>();
         this.CopyLabel(healthPanel.Find<UILabel>("Incinerator"), crematoriumAvailabilityLabel);
-        zOrder = this.SetUpInfoControl(crematoriumAvailabilityLabel, zOrder);
+        zOrder = this.PositionInfoControl(crematoriumAvailabilityLabel, zOrder);
 
         this.crematoriumMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("DeathcareMeter"));
-        zOrder = this.SetUpInfoControl(this.crematoriumMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.crematoriumMeter, zOrder);
 
         // Set up unemployment controls
         GameObject employmentLabelObject = new GameObject("Employment");
         var employmentLabel = employmentLabelObject.AddComponent<UILabel>();
         employmentLabel.font = title.font;
         employmentLabel.localeID = "STATS_9";
-        zOrder = this.SetUpInfoControl(employmentLabel, zOrder);
+        zOrder = this.PositionInfoControl(employmentLabel, zOrder);
 
         this.employmentMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
-        zOrder = this.SetUpInfoControl(this.employmentMeter, zOrder);
+        zOrder = this.PositionInfoControl(this.employmentMeter, zOrder);
     }
 
-    void OnToggleButtonClick(UIComponent component, UIMouseEventParameter eventParam) {
+    /// <summary>
+    /// Called when the toggle button in the main UI is clicked, toggling panel visibility.
+    /// </summary>
+    /// <param name="component">The toggle button component.</param>
+    /// <param name="eventParam">The event parameters.</param>
+    private void OnToggleButtonClick(UIComponent component, UIMouseEventParameter eventParam) {
         this.isVisible = !this.isVisible;
     }
 
+    /// <summary>
+    /// Called when the close button is clicked, making the panel invisible.
+    /// </summary>
+    /// <param name="component">The close button component.</param>
+    /// <param name="eventParam">The event parameters.</param>
     private void OnCloseButtonClick(UIComponent component, UIMouseEventParameter eventParam) {
         this.isVisible = false;
     }
 
-    private int SetUpInfoControl(UIComponent control, int zOrder) {
+    /// <summary>
+    /// Positions the provided control.
+    /// </summary>
+    /// <param name="control">The control to position.</param>
+    /// <param name="zOrder">The order index of the control used when automatically laying out the control.</param>
+    /// <returns>The incremented order index to be set to the next control.</returns>
+    private int PositionInfoControl(UIComponent control, int zOrder) {
         control.cachedTransform.parent = this.infoPanel.transform;
         control.height *= HeightScale;
         control.width *= WidthScale;
@@ -261,12 +298,20 @@ public class CityVitalsWatchPanel : UIPanel {
         return zOrder + 1;
     }
 
+    /// <summary>
+    /// Copies the font, localization label ID, and color from the source label to the specified target label.
+    /// </summary>
+    /// <param name="source">The source label from which to copy property values.</param>
+    /// <param name="target">The target label.</param>
     private void CopyLabel(UILabel source, UILabel target) {
         target.font = source.font;
         target.localeID = source.localeID;
         target.color = source.color;
     }
 
+    /// <summary>
+    /// Updates the displayed stat values and tooltips for all info controls.
+    /// </summary>
     private void UpdateDisplay() {
         int electricityCapacity = 0;
         int electricityConsumption = 0;
@@ -345,11 +390,17 @@ public class CityVitalsWatchPanel : UIPanel {
         this.employmentMeter.tooltip = this.employmentMeter.value + "%";
     }
 
+    /// <summary>
+    /// Calculates a percentage  based on the specified capacity and consumption values using Cities: Skylines' percentage algorithm.
+    /// </summary>
+    /// <param name="capacity">The capacity value.</param>
+    /// <param name="consumption">The consumption value.</param>
+    /// <returns></returns>
     private float GetPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
         /* This algorithm is what's used by the class InfoViewPanel to determine percentages displayed through the UI.
          * I'm unaware of the reasons for choosing the default values for consumptionMin and consumptionMax, but I
-         * wanted to keep the logic consistent with the built-in UI sliders. The logic is the same but I cleaned it
-         * up a bit.
+         * wanted to keep the logic consistent with the built-in UI sliders (obviously basePercent is always
+         * multiplied by 50, but I don't know why). The logic is the same but I cleaned it up a bit.
          */
         if (capacity == 0) {
             return 0f;
