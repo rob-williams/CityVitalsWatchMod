@@ -117,6 +117,12 @@ public class CityVitalsWatchPanel : UIPanel {
         this.toggleButton.absolutePosition = new Vector3(125f, 12f);
         this.toggleButton.tooltip = "City Vitals";
         this.toggleButton.eventClick += OnToggleButtonClick;
+        var toggleButtonDragHandleObject = new GameObject("CityVitalsWatchButtonDragHandler");
+        toggleButtonDragHandleObject.transform.parent = this.toggleButton.transform;
+        toggleButtonDragHandleObject.transform.localPosition = Vector3.zero;
+        var toggleButtonDragHandle = toggleButtonDragHandleObject.AddComponent<UIDragHandle>();
+        toggleButtonDragHandle.width = this.toggleButton.width;
+        toggleButtonDragHandle.height = this.toggleButton.height;
         
         // Create a drag handle for this panel
         var dragHandleObject = new GameObject("DragHandler");
