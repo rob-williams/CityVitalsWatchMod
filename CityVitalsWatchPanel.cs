@@ -19,7 +19,6 @@ public class CityVitalsWatchPanel : UIPanel {
 
     private bool previousContainsMouse = true;
     private UIView uiParent;
-    private UIButton optionsButton;
     private UIButton toggleButton;
     private UIPanel infoPanel;
 
@@ -80,9 +79,6 @@ public class CityVitalsWatchPanel : UIPanel {
             this.isVisible = !this.isVisible;
         }
 
-        // Position the toggle button each frame to make sure it stays in the correct spot during resolution changes
-        this.toggleButton.position = this.optionsButton.position - new Vector3(this.optionsButton.width, (this.optionsButton.height - this.toggleButton.height) / 2f, 0f);
-
         // Update panel opacity and displayed stats if visible
         if (this.isVisible) {
             if (this.previousContainsMouse != this.containsMouse) {
@@ -107,18 +103,18 @@ public class CityVitalsWatchPanel : UIPanel {
     /// Creates, positions, and styles all panel controls, as well as the toggle button in the main UI.
     /// </summary>
     private void SetUpControls() {
-        // First, create the button to toggle this panel and position it near the options button
-        this.optionsButton = this.uiParent.FindUIComponent<UIButton>("Esc");
-        var toolButtonObject = new GameObject("CityVitalsWatchButton");
-        toolButtonObject.transform.parent = this.uiParent.transform;
-        toolButtonObject.transform.localPosition = Vector3.zero;
-        this.toggleButton = toolButtonObject.AddComponent<UIButton>();
+        // First, create the button to toggle this panel
+        var toggleButtonObject = new GameObject("CityVitalsWatchButton");
+        toggleButtonObject.transform.parent = this.uiParent.transform;
+        toggleButtonObject.transform.localPosition = Vector3.zero;
+        this.toggleButton = toggleButtonObject.AddComponent<UIButton>();
         this.toggleButton.normalBgSprite = "ButtonMenu";
         this.toggleButton.hoveredBgSprite = "ButtonMenuHovered";
         this.toggleButton.pressedBgSprite = "ButtonMenuPressed";
         this.toggleButton.normalFgSprite = "ThumbStatistics";
-        this.toggleButton.width = 33f;
-        this.toggleButton.height = 33f;
+        this.toggleButton.width = 40f;
+        this.toggleButton.height = 40f;
+        this.toggleButton.absolutePosition = new Vector3(125f, 12f);
         this.toggleButton.tooltip = "City Vitals";
         this.toggleButton.eventClick += OnToggleButtonClick;
         
@@ -150,7 +146,7 @@ public class CityVitalsWatchPanel : UIPanel {
         closeButton.normalBgSprite = "buttonclose";
         closeButton.hoveredBgSprite = "buttonclosehover";
         closeButton.pressedBgSprite = "buttonclosepressed";
-        closeButton.position = new Vector3(this.width - closeButton.width, -2f, 0f);
+        closeButton.relativePosition = new Vector3(this.width - closeButton.width, -2f);
         closeButton.eventClick += this.OnCloseButtonClick;
 
         // Create a title for this panel
@@ -169,7 +165,7 @@ public class CityVitalsWatchPanel : UIPanel {
 
         // Set title font and position the title control
         title.font = titleFont;
-        title.position = new Vector3((this.width / 2f) - (title.width / 2f), -10f * HeightScale, 0f);
+        title.position = new Vector3((this.width / 2f) - (title.width / 2f), -10f * HeightScale);
 
         // Create a sub-panel to auto-position the info controls
         var infoPanelObject = new GameObject("ControlPanel");
