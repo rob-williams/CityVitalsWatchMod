@@ -3,13 +3,16 @@
     using ColossalFramework.UI;
     using ICities;
     using UnityEngine;
+    using System.Xml;
+    using System.Xml.Serialization;
+    using System.IO;
 
     /// <summary>
     /// Loads the City Vitals Watch panel when a game is loaded or started.
     /// </summary>
     public class CityVitalsWatchLoader : ILoadingExtension {
 
-        private static CityVitalsWatchPanel panel = null;
+        private static CityVitalsWatchPanel Panel = null;
 
         /// <summary>
         /// Called when the mod is created; does nothing.
@@ -23,8 +26,10 @@
         /// </summary>
         /// <param name="mode">The type of loading operation being performed.</param>
         public void OnLevelLoaded(LoadMode mode) {
-            // Create object and attach panel component if a game is being loaded or started
+            // If a game is being loaded or started, load the settings and then create an object and attach the panel component
             if (mode == LoadMode.LoadGame || mode == LoadMode.NewGame) {
+                CityVitalsWatch.Settings = CityVitalsWatchSerializer.LoadSettings();
+
                 UIView uiViewParent = null;
 
                 foreach (var uiView in GameObject.FindObjectsOfType<UIView>()) {
@@ -37,7 +42,7 @@
                 if (uiViewParent != null) {
                     GameObject obj = new GameObject("CityVitalsWatch");
                     obj.transform.parent = uiViewParent.cachedTransform;
-                    CityVitalsWatchLoader.panel = obj.AddComponent<CityVitalsWatchPanel>();
+                    Panel = obj.AddComponent<CityVitalsWatchPanel>();
                 }
             }
         }
@@ -46,9 +51,25 @@
         /// Called when a level is unloaded.
         /// </summary>
         public void OnLevelUnloading() {
-            if (CityVitalsWatchLoader.panel != null) {
-                GameObject.Destroy(CityVitalsWatchLoader.panel.gameObject);
-                CityVitalsWatchLoader.panel = null;
+            if (Panel != null) {
+                var resolutionData = CityVitalsWatch.Settings.GetResolutionData(Screen.currentResolution.width, Screen.currentResolution.height);
+
+                if (resolutionData == null) {
+                    resolutionData = new CityVitalsWatchResolution();
+                    resolutionData.ScreenWidth = Screen.currentResolution.width;
+                    resolutionData.ScreenHeight = Screen.currentResolution.height;
+                    CityVitalsWatch.Settings.Resolutions.Add(resolutionData);
+                }
+
+                resolutionData.PanelPositionX = Panel.relativePosition.x;
+                resolutionData.PanelPositionY = Panel.relativePosition.y;
+                resolutionData.ToggleButtonPositionX = Panel.ToggleButton.absolutePosition.x;
+                resolutionData.ToggleButtonPositionY = Panel.ToggleButton.absolutePosition.y;
+
+                CityVitalsWatchSerializer.SaveSettings(CityVitalsWatch.Settings);
+
+                GameObject.Destroy(Panel.gameObject);
+                Panel = null;
             }
         }
 

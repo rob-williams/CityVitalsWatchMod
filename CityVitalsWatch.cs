@@ -10,6 +10,11 @@
     public class CityVitalsWatch : IUserMod {
 
         /// <summary>
+        /// The mod's settings.
+        /// </summary>
+        public static CityVitalsWatchSettings Settings;
+
+        /// <summary>
         /// The name of the mod.
         /// </summary>
         public string Name {

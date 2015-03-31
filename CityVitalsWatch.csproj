@@ -54,6 +54,9 @@
     <Compile Include="CityVitalsWatch.cs" />
     <Compile Include="CityVitalsWatchLoader.cs" />
     <Compile Include="CityVitalsWatchPanel.cs" />
+    <Compile Include="CityVitalsWatchResolution.cs" />
+    <Compile Include="CityVitalsWatchSerializer.cs" />
+    <Compile Include="CityVitalsWatchSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
