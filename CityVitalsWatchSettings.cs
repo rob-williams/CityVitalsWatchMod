@@ -20,6 +20,11 @@
         public List<CityVitalsWatchResolution> Resolutions = new List<CityVitalsWatchResolution>();
 
         /// <summary>
+        /// Indicates whether the panel should be visible by default.
+        /// </summary>
+        public bool DefaultPanelVisibility = true;
+
+        /// <summary>
         /// Returns the <see cref="CityVitalsWatchResolution"/> instance corresponding to the specified screen width and height.
         /// </summary>
         /// <param name="screenWidth">The width of the screen.</param>

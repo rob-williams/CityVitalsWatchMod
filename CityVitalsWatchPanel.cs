@@ -62,7 +62,7 @@
             base.Start();
 
             this.backgroundSprite = "MenuPanel";
-            this.isVisible = true;
+            this.isVisible = CityVitalsWatch.Settings.DefaultPanelVisibility;
             this.canFocus = true;
             this.isInteractive = true;
             this.width = PanelWidth;
@@ -115,35 +115,9 @@
         /// Creates, positions, and styles all panel controls, as well as the toggle button in the main UI.
         /// </summary>
         private void SetUpControls() {
-            // First, create the button to toggle this panel
-            var toggleButtonObject = new GameObject("CityVitalsWatchButton");
-            toggleButtonObject.transform.parent = this.uiParent.transform;
-            toggleButtonObject.transform.localPosition = Vector3.zero;
-            this.toggleButton = toggleButtonObject.AddComponent<UIButton>();
-            this.toggleButton.normalBgSprite = "ButtonMenu";
-            this.toggleButton.hoveredBgSprite = "ButtonMenuHovered";
-            this.toggleButton.pressedBgSprite = "ButtonMenuPressed";
-            this.toggleButton.normalFgSprite = "ThumbStatistics";
-            this.toggleButton.width = 40f;
-            this.toggleButton.height = 40f;
-            this.toggleButton.absolutePosition = new Vector3(ToggleButtonPositionX, ToggleButtonPositionY);
-            this.toggleButton.tooltip = "City Vitals";
-            this.toggleButton.eventClick += OnToggleButtonClick;
-            var toggleButtonDragHandleObject = new GameObject("CityVitalsWatchButtonDragHandler");
-            toggleButtonDragHandleObject.transform.parent = this.toggleButton.transform;
-            toggleButtonDragHandleObject.transform.localPosition = Vector3.zero;
-            var toggleButtonDragHandle = toggleButtonDragHandleObject.AddComponent<UIDragHandle>();
-            toggleButtonDragHandle.width = this.toggleButton.width;
-            toggleButtonDragHandle.height = this.toggleButton.height;
-
-            // Create a drag handle for this panel
-            var dragHandleObject = new GameObject("DragHandler");
-            dragHandleObject.transform.parent = this.transform;
-            dragHandleObject.transform.localPosition = Vector3.zero;
-            var dragHandle = dragHandleObject.AddComponent<UIDragHandle>();
-            dragHandle.width = this.width;
-            dragHandle.height = 40f;
-            dragHandle.zOrder = 1000;
+            this.CreateToggleButton();
+            this.CreateDragHandle();
+            this.CreateCloseButton();
 
             // Create a resize handle for this panel
             //var resizeHandleObject = new GameObject("Resize Handler");
@@ -153,19 +127,6 @@
             //resizeHandle.width = this.width;
             //resizeHandle.height = this.height;
             //resizeHandle.zOrder = 1000;
-
-            // Create a close button for this panel
-            var closeButtonObject = new GameObject("CloseButton");
-            closeButtonObject.transform.parent = this.transform;
-            closeButtonObject.transform.localPosition = Vector3.zero;
-            var closeButton = closeButtonObject.AddComponent<UIButton>();
-            closeButton.width = 32f;
-            closeButton.height = 32f;
-            closeButton.normalBgSprite = "buttonclose";
-            closeButton.hoveredBgSprite = "buttonclosehover";
-            closeButton.pressedBgSprite = "buttonclosepressed";
-            closeButton.relativePosition = new Vector3(this.width - closeButton.width, -2f);
-            closeButton.eventClick += this.OnCloseButtonClick;
 
             // Create a title for this panel
             var titleObject = new GameObject("Title");
@@ -276,6 +237,61 @@
 
             this.employmentMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter"));
             zOrder = this.PositionInfoControl(this.employmentMeter, zOrder);
+        }
+
+        /// <summary>
+        /// Creates and positions the toggle button in the main UI.
+        /// </summary>
+        private void CreateToggleButton() {
+            var toggleButtonObject = new GameObject("CityVitalsWatchButton");
+            toggleButtonObject.transform.parent = this.uiParent.transform;
+            toggleButtonObject.transform.localPosition = Vector3.zero;
+            this.toggleButton = toggleButtonObject.AddComponent<UIButton>();
+            this.toggleButton.normalBgSprite = "ButtonMenu";
+            this.toggleButton.hoveredBgSprite = "ButtonMenuHovered";
+            this.toggleButton.pressedBgSprite = "ButtonMenuPressed";
+            this.toggleButton.normalFgSprite = "ThumbStatistics";
+            this.toggleButton.width = 40f;
+            this.toggleButton.height = 40f;
+            this.toggleButton.absolutePosition = new Vector3(ToggleButtonPositionX, ToggleButtonPositionY);
+            this.toggleButton.tooltip = "City Vitals";
+            this.toggleButton.eventClick += OnToggleButtonClick;
+            var toggleButtonDragHandleObject = new GameObject("CityVitalsWatchButtonDragHandler");
+            toggleButtonDragHandleObject.transform.parent = this.toggleButton.transform;
+            toggleButtonDragHandleObject.transform.localPosition = Vector3.zero;
+            var toggleButtonDragHandle = toggleButtonDragHandleObject.AddComponent<UIDragHandle>();
+            toggleButtonDragHandle.width = this.toggleButton.width;
+            toggleButtonDragHandle.height = this.toggleButton.height;
+        }
+
+        /// <summary>
+        /// Creates and position a drag handle to allow the panel to be moved by its title bar.
+        /// </summary>
+        private void CreateDragHandle() {
+            var dragHandleObject = new GameObject("DragHandler");
+            dragHandleObject.transform.parent = this.transform;
+            dragHandleObject.transform.localPosition = Vector3.zero;
+            var dragHandle = dragHandleObject.AddComponent<UIDragHandle>();
+            dragHandle.width = this.width;
+            dragHandle.height = 40f;
+            dragHandle.zOrder = 1000;
+        }
+
+        /// <summary>
+        /// Creates and positions the panel's close button.
+        /// </summary>
+        private void CreateCloseButton() {
+            var closeButtonObject = new GameObject("CloseButton");
+            closeButtonObject.transform.parent = this.transform;
+            closeButtonObject.transform.localPosition = Vector3.zero;
+            var closeButton = closeButtonObject.AddComponent<UIButton>();
+            closeButton.width = 32f;
+            closeButton.height = 32f;
+            closeButton.normalBgSprite = "buttonclose";
+            closeButton.hoveredBgSprite = "buttonclosehover";
+            closeButton.pressedBgSprite = "buttonclosepressed";
+            closeButton.relativePosition = new Vector3(this.width - closeButton.width, 2f);
+            closeButton.eventClick += this.OnCloseButtonClick;
         }
 
         /// <summary>
