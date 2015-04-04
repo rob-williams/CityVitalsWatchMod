@@ -53,14 +53,6 @@
         public void OnLevelUnloading() {
             if (Panel != null) {
                 var resolutionData = CityVitalsWatch.Settings.GetResolutionData(Screen.currentResolution.width, Screen.currentResolution.height);
-
-                if (resolutionData == null) {
-                    resolutionData = new CityVitalsWatchResolution();
-                    resolutionData.ScreenWidth = Screen.currentResolution.width;
-                    resolutionData.ScreenHeight = Screen.currentResolution.height;
-                    CityVitalsWatch.Settings.Resolutions.Add(resolutionData);
-                }
-
                 resolutionData.PanelPositionX = Panel.relativePosition.x;
                 resolutionData.PanelPositionY = Panel.relativePosition.y;
                 resolutionData.ToggleButtonPositionX = Panel.ToggleButton.absolutePosition.x;

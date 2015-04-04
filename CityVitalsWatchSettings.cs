@@ -30,8 +30,7 @@
         /// <param name="screenWidth">The width of the screen.</param>
         /// <param name="screenHeight">The height of the screen.</param>
         /// <returns>
-        /// The <see cref="CityVitalsWatchResolution"/> instance corresponding to the specified screen width and height or
-        /// null if no such instance was found.
+        /// The <see cref="CityVitalsWatchResolution"/> instance corresponding to the specified screen width and height.
         /// </returns>
         public CityVitalsWatchResolution GetResolutionData(int screenWidth, int screenHeight) {
             CityVitalsWatchResolution resolutionData = null;
@@ -41,6 +40,13 @@
                     resolutionData = resolution;
                     break;
                 }
+            }
+
+            if (resolutionData == null) {
+                resolutionData = new CityVitalsWatchResolution();
+                resolutionData.ScreenWidth = screenWidth;
+                resolutionData.ScreenHeight = screenHeight;
+                this.Resolutions.Add(resolutionData);
             }
 
             return resolutionData;

@@ -18,21 +18,21 @@
         /// <summary>
         /// The relative x-position of the panel.
         /// </summary>
-        public float PanelPositionX;
+        public float PanelPositionX = 10f;
 
         /// <summary>
         /// The relative y-position of the panel.
         /// </summary>
-        public float PanelPositionY;
+        public float PanelPositionY = 65f;
 
         /// <summary>
         /// The absolute x-position of the toggle button.
         /// </summary>
-        public float ToggleButtonPositionX;
+        public float ToggleButtonPositionX = 125f;
 
         /// <summary>
         /// The absolute y-position of the toggle button.
         /// </summary>
-        public float ToggleButtonPositionY;
+        public float ToggleButtonPositionY = 12f;
     }
 }
