@@ -1,5 +1,5 @@
-﻿namespace CityVitalsWatch
-{
+﻿namespace CityVitalsWatch {
+
     using ICities;
 
     // Path to Workshop folder: C:\Program Files (x86)\Steam\SteamApps\workshop\content\255710\410151616
