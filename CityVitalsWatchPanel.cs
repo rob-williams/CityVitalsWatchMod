@@ -469,6 +469,12 @@
             if (control is UISlider) {
                 control.width = MeterWidth;
             }
+            else if (control is UILabel) {
+                var label = control as UILabel;
+                var localeId = label.localeID;
+                label.localeID = string.Empty;
+                label.localeID = localeId;
+            }
 
             var panelHeightAdjustment = control.height + this.infoPanel.autoLayoutPadding.top + this.infoPanel.autoLayoutPadding.bottom;
             this.height += panelHeightAdjustment;
