@@ -25,7 +25,7 @@
         /// The description of the mod.
         /// </summary>
         public string Description {
-            get { return "Adds a panel to display vital city stats at a glance"; }
+            get { return "Adds a configurable panel to display vital city stats at a glance."; }
         }
     }
 }
