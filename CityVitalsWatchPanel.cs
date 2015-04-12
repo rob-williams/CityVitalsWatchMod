@@ -14,6 +14,8 @@
         private static readonly float PanelWidth = 215f;
         private static readonly float TitleBarHeight = 40f;
         private static readonly float MeterWidth = 200f;
+        private static readonly float MeterHeight = 12f;
+        private static readonly float MeterIndicatorSize = 14f;
 
         private bool previousContainsMouse = true;
         private UIView uiParent;
@@ -148,279 +150,155 @@
 
             // Set up electricity controls
             if (CityVitalsWatch.Settings.DisplayElectricityAvailability) {
-                MouseEventHandler electricityEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var electricityAvailabilityLabel = this.CreateLabel(electricityPanel.Find<UILabel>("ElectricityAvailability"));
+                this.PositionInfoControl(electricityAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(4));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 4;
-                    }
-                };
-
-                var electricityAvailabilityLabel = GameObject.Instantiate<UILabel>(electricityPanel.Find<UILabel>("ElectricityAvailability"));
-                this.PositionInfoControl(electricityAvailabilityLabel, ref zOrder, electricityEventHandler);
-
-                this.electricityMeter = GameObject.Instantiate<UISlider>(electricityPanel.Find<UISlider>("ElectricityMeter"));
-                this.PositionInfoControl(this.electricityMeter, ref zOrder, electricityEventHandler);
+                this.electricityMeter = this.CreateAvailabilityMeter("Electricity");
+                this.PositionInfoControl(this.electricityMeter, ref zOrder, this.CreateServiceMenuClickHandler(4));
             }
 
             var waterPanel = this.uiParent.GetComponentInChildren<WaterInfoViewPanel>();
 
             // Set up water controls
             if (CityVitalsWatch.Settings.DisplayWaterAvailability) {
-                MouseEventHandler waterEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var waterAvailabilityLabel = this.CreateLabel(waterPanel.Find<UILabel>("WaterAvailability"));
+                this.PositionInfoControl(waterAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(5));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 5;
-                    }
-                };
-
-                var waterAvailabilityLabel = GameObject.Instantiate<UILabel>(waterPanel.Find<UILabel>("WaterAvailability"));
-                this.PositionInfoControl(waterAvailabilityLabel, ref zOrder, waterEventHandler);
-
-                this.waterMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("WaterMeter"));
-                this.PositionInfoControl(this.waterMeter, ref zOrder, waterEventHandler);
+                this.waterMeter = this.CreateAvailabilityMeter("Water");
+                this.PositionInfoControl(this.waterMeter, ref zOrder, this.CreateServiceMenuClickHandler(5));
             }
 
             // Set up sewage controls
             if (CityVitalsWatch.Settings.DisplaySewageTreatment) {
-                MouseEventHandler sewageEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var sewageAvailabilityLabel = this.CreateLabel(waterPanel.Find<UILabel>("SewageAvailability"));
+                this.PositionInfoControl(sewageAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(5));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 5;
-                    }
-                };
-
-                var sewageAvailabilityLabel = GameObject.Instantiate<UILabel>(waterPanel.Find<UILabel>("SewageAvailability"));
-                this.PositionInfoControl(sewageAvailabilityLabel, ref zOrder, sewageEventHandler);
-
-                this.sewageMeter = GameObject.Instantiate<UISlider>(waterPanel.Find<UISlider>("SewageMeter"));
-                this.PositionInfoControl(this.sewageMeter, ref zOrder, sewageEventHandler);
+                this.sewageMeter = this.CreateAvailabilityMeter("Sewage");
+                this.PositionInfoControl(this.sewageMeter, ref zOrder, this.CreateServiceMenuClickHandler(5));
             }
 
             var garbagePanel = this.uiParent.GetComponentInChildren<GarbageInfoViewPanel>();
 
             // Set up landfill controls
             if (CityVitalsWatch.Settings.DisplayLandfillUsage) {
-                MouseEventHandler landfillEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var landfillUsageLabel = this.CreateLabel(garbagePanel.Find<UILabel>("LandfillUsage"));
+                this.PositionInfoControl(landfillUsageLabel, ref zOrder, this.CreateServiceMenuClickHandler(6));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 6;
-                    }
-                };
-
-                var landfillUsageLabel = GameObject.Instantiate<UILabel>(garbagePanel.Find<UILabel>("LandfillUsage"));
-                this.PositionInfoControl(landfillUsageLabel, ref zOrder, landfillEventHandler);
-
-                this.landfillMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("LandfillMeter"));
-                var landfillTexture = this.landfillMeter.Find<UITextureSprite>("LandfillGradient");
-                landfillTexture.renderMaterial.SetColor("_ColorA", targetColor);
-                landfillTexture.renderMaterial.SetColor("_ColorB", negativeColor);
-                this.PositionInfoControl(this.landfillMeter, ref zOrder, landfillEventHandler);
+                var landfillTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
+                this.landfillMeter = this.CreateGradientMeter("Landfill", landfillTexture, targetColor, negativeColor);
+                this.PositionInfoControl(this.landfillMeter, ref zOrder, this.CreateServiceMenuClickHandler(6));
             }
 
             // Set up incineration controls
             if (CityVitalsWatch.Settings.DisplayIncinerationStatus) {
-                MouseEventHandler incineratorEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var incinerationStatusLabel = this.CreateLabel(garbagePanel.Find<UILabel>("IncinerationStatus"));
+                this.PositionInfoControl(incinerationStatusLabel, ref zOrder, this.CreateServiceMenuClickHandler(6));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 6;
-                    }
-                };
-
-                var incinerationStatusLabel = GameObject.Instantiate<UILabel>(garbagePanel.Find<UILabel>("IncinerationStatus"));
-                this.PositionInfoControl(incinerationStatusLabel, ref zOrder, incineratorEventHandler);
-
-                this.incineratorMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("IncineratorMeter"));
-                this.PositionInfoControl(this.incineratorMeter, ref zOrder, incineratorEventHandler);
+                this.incineratorMeter = this.CreateAvailabilityMeter("Incinerator");
+                this.PositionInfoControl(this.incineratorMeter, ref zOrder, this.CreateServiceMenuClickHandler(6));
             }
 
             var healthPanel = this.uiParent.GetComponentInChildren<HealthInfoViewPanel>();
 
             // Set up healthcare controls
             if (CityVitalsWatch.Settings.DisplayHealthcareAvailability) {
-                MouseEventHandler healthcareEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var healthcareAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("HealthcareAvaibility")); // NOTE: CO misspelled this
+                this.PositionInfoControl(healthcareAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 8;
-                    }
-                };
-
-                var healthcareAvailabilityLabel = GameObject.Instantiate<UILabel>(healthPanel.Find<UILabel>("HealthcareAvaibility")); // NOTE: CO misspelled this
-                this.PositionInfoControl(healthcareAvailabilityLabel, ref zOrder, healthcareEventHandler);
-
-                this.healthcareMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("HealthcareMeter"));
-                this.PositionInfoControl(this.healthcareMeter, ref zOrder, healthcareEventHandler);
+                this.healthcareMeter = this.CreateAvailabilityMeter("Healthcare");
+                this.PositionInfoControl(this.healthcareMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
             }
 
             // Set up average health controls
             if (CityVitalsWatch.Settings.DisplayAverageHealth) {
-                MouseEventHandler avgHealthEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var averageHealthLabel = this.CreateLabel(healthPanel.Find<UILabel>("AvgHealth"));
+                this.PositionInfoControl(averageHealthLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 8;
-                    }
-                };
-
-                var averageHealthLabel = GameObject.Instantiate<UILabel>(healthPanel.Find<UILabel>("AvgHealth"));
-                this.PositionInfoControl(averageHealthLabel, ref zOrder, avgHealthEventHandler);
-
-                this.averageHealthMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("AvgHealthBar"));
-                var averageHealthTexture = this.averageHealthMeter.Find<UITextureSprite>("Background");
-                averageHealthTexture.renderMaterial.SetColor("_ColorA", negativeColor);
-                averageHealthTexture.renderMaterial.SetColor("_ColorB", targetColor);
-                this.PositionInfoControl(this.averageHealthMeter, ref zOrder, avgHealthEventHandler);
+                var averageHealthTexture = healthPanel.Find<UISlider>("AvgHealthBar").Find<UITextureSprite>("Background");
+                this.averageHealthMeter = this.CreateGradientMeter("AverageHealth", averageHealthTexture, negativeColor, targetColor);
+                this.PositionInfoControl(this.averageHealthMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
             }
 
             // Set up cemetery controls
             if (CityVitalsWatch.Settings.DisplayCemeteryUsage) {
-                MouseEventHandler cemeteryEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var cemeteryUsageLabel = this.CreateLabel(healthPanel.Find<UILabel>("CemetaryUsage")); // NOTE: CO misspelled this
+                this.PositionInfoControl(cemeteryUsageLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 8;
-                    }
-                };
-
-                var cemeteryUsageLabel = GameObject.Instantiate(healthPanel.Find<UILabel>("CemetaryUsage")); // NOTE: CO misspelled this
-                this.PositionInfoControl(cemeteryUsageLabel, ref zOrder, cemeteryEventHandler);
-
-                this.cemeteryMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("CemetaryMeter")); // NOTE: CO misspelled this
-                var cemeteryTexture = this.cemeteryMeter.Find<UITextureSprite>("Background");
-                cemeteryTexture.renderMaterial.SetColor("_ColorA", targetColor);
-                cemeteryTexture.renderMaterial.SetColor("_ColorB", negativeColor);
-                this.PositionInfoControl(this.cemeteryMeter, ref zOrder, cemeteryEventHandler);
+                var cemeteryTexture = healthPanel.Find<UISlider>("CemetaryMeter").Find<UITextureSprite>("Background"); // NOTE: CO misspelled this
+                this.cemeteryMeter = this.CreateGradientMeter("Cemetery", cemeteryTexture, targetColor, negativeColor);
+                this.PositionInfoControl(this.cemeteryMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
             }
 
             // Set up crematorium controls
             if (CityVitalsWatch.Settings.DisplayCrematoriumAvailability) {
-                MouseEventHandler crematoriumEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var crematoriumAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
+                this.PositionInfoControl(crematoriumAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 8;
-                    }
-                };
-
-                var crematoriumAvailabilityLabel = GameObject.Instantiate<UILabel>(healthPanel.Find<UILabel>("Incinerator"));
-                this.PositionInfoControl(crematoriumAvailabilityLabel, ref zOrder, crematoriumEventHandler);
-
-                this.crematoriumMeter = GameObject.Instantiate<UISlider>(healthPanel.Find<UISlider>("DeathcareMeter"));
-                this.PositionInfoControl(this.crematoriumMeter, ref zOrder, crematoriumEventHandler);
+                this.crematoriumMeter = this.CreateAvailabilityMeter("Crematorium");
+                this.PositionInfoControl(this.crematoriumMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
             }
 
             var firePanel = this.uiParent.GetComponentInChildren<FireSafetyInfoViewPanel>();
 
             // Set up fire hazard controls
             if (CityVitalsWatch.Settings.DisplayFireHazard) {
-                MouseEventHandler fireEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var fireHazardLabel = this.CreateLabel(firePanel.Find<UILabel>("SafetyLabel"));
+                this.PositionInfoControl(fireHazardLabel, ref zOrder, this.CreateServiceMenuClickHandler(9));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 9;
-                    }
-                };
-
-                var fireHazardLabel = GameObject.Instantiate<UILabel>(firePanel.Find<UILabel>("SafetyLabel"));
-                this.PositionInfoControl(fireHazardLabel, ref zOrder, fireEventHandler);
-
-                this.fireMeter = GameObject.Instantiate<UISlider>(firePanel.Find<UISlider>("SafetyMeter"));
-                var fireTexture = this.fireMeter.Find<UITextureSprite>("SafetyGradient");
-                fireTexture.renderMaterial.SetColor("_ColorA", targetColor);
-                fireTexture.renderMaterial.SetColor("_ColorB", negativeColor);
-                this.PositionInfoControl(fireMeter, ref zOrder, fireEventHandler);
+                var fireTexture = firePanel.Find<UISlider>("SafetyMeter").Find<UITextureSprite>("SafetyGradient");
+                this.fireMeter = this.CreateGradientMeter("FireHazard", fireTexture, targetColor, negativeColor);
+                this.PositionInfoControl(fireMeter, ref zOrder, this.CreateServiceMenuClickHandler(9));
             }
 
             var crimePanel = this.uiParent.GetComponentInChildren<CrimeInfoViewPanel>();
 
             // Set up crime controls
             if (CityVitalsWatch.Settings.DisplayCrimeRate) {
-                MouseEventHandler crimeEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var crimeRateLabel = this.CreateLabel(crimePanel.Find<UILabel>("SafetyLabel"));
+                this.PositionInfoControl(crimeRateLabel, ref zOrder, this.CreateServiceMenuClickHandler(10));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 10;
-                    }
-                };
-
-                var crimeRateLabel = GameObject.Instantiate<UILabel>(crimePanel.Find<UILabel>("SafetyLabel"));
-                this.PositionInfoControl(crimeRateLabel, ref zOrder, crimeEventHandler);
-
-                this.crimeMeter = GameObject.Instantiate<UISlider>(crimePanel.Find<UISlider>("SafetyMeter"));
-                var crimeTexture = this.crimeMeter.Find<UITextureSprite>("SafetyGradient");
-                crimeTexture.renderMaterial.SetColor("_ColorA", targetColor);
-                crimeTexture.renderMaterial.SetColor("_ColorB", negativeColor);
-                this.PositionInfoControl(this.crimeMeter, ref zOrder, crimeEventHandler);
+                var crimeTexture = crimePanel.Find<UISlider>("SafetyMeter").Find<UITextureSprite>("SafetyGradient");
+                this.crimeMeter = this.CreateGradientMeter("CrimeRate", crimeTexture, targetColor, negativeColor);
+                this.PositionInfoControl(this.crimeMeter, ref zOrder, this.CreateServiceMenuClickHandler(10));
             }
 
             var educationPanel = this.uiParent.GetComponentInChildren<EducationInfoViewPanel>();
 
             // Set up elementary school controls
             if (CityVitalsWatch.Settings.DisplayElementarySchoolAvailability) {
-                MouseEventHandler elementarySchoolEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var elementarySchoolLabel = this.CreateLabel(educationPanel.Find<UILabel>("ElementaryAvailability"));
+                this.PositionInfoControl(elementarySchoolLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 12;
-                    }
-                };
-
-                var elementarySchoolLabel = GameObject.Instantiate<UILabel>(educationPanel.Find<UILabel>("ElementaryAvailability"));
-                this.PositionInfoControl(elementarySchoolLabel, ref zOrder, elementarySchoolEventHandler);
-
-                this.elementarySchoolMeter = GameObject.Instantiate<UISlider>(educationPanel.Find<UISlider>("ElementaryMeter"));
-                this.PositionInfoControl(this.elementarySchoolMeter, ref zOrder, elementarySchoolEventHandler);
+                this.elementarySchoolMeter = this.CreateAvailabilityMeter("ElementarySchool");
+                this.PositionInfoControl(this.elementarySchoolMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
             }
 
             // Set up high school controls
             if (CityVitalsWatch.Settings.DisplayHighSchoolAvailability) {
-                MouseEventHandler highSchoolEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var highSchoolLabel = this.CreateLabel(educationPanel.Find<UILabel>("HighAvailability"));
+                this.PositionInfoControl(highSchoolLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 12;
-                    }
-                };
-
-                var highSchoolLabel = GameObject.Instantiate<UILabel>(educationPanel.Find<UILabel>("HighAvailability"));
-                this.PositionInfoControl(highSchoolLabel, ref zOrder, highSchoolEventHandler);
-
-                this.highSchoolMeter = GameObject.Instantiate<UISlider>(educationPanel.Find<UISlider>("HighMeter"));
-                this.PositionInfoControl(this.highSchoolMeter, ref zOrder, highSchoolEventHandler);
+                this.highSchoolMeter = this.CreateAvailabilityMeter("HighSchool");
+                this.PositionInfoControl(this.highSchoolMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
             }
 
             // Set up university controls
             if (CityVitalsWatch.Settings.DisplayUniversityAvailability) {
-                MouseEventHandler universityEventHandler = delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                    UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+                var universityLabel = this.CreateLabel(educationPanel.Find<UILabel>("UnivAvailability"));
+                this.PositionInfoControl(universityLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
 
-                    if (mainToolstrip != null) {
-                        mainToolstrip.selectedIndex = 12;
-                    }
-                };
-
-                var universityLabel = GameObject.Instantiate<UILabel>(educationPanel.Find<UILabel>("UnivAvailability"));
-                this.PositionInfoControl(universityLabel, ref zOrder, universityEventHandler);
-
-                this.universityMeter = GameObject.Instantiate<UISlider>(educationPanel.Find<UISlider>("UnivMeter"));
-                this.PositionInfoControl(this.universityMeter, ref zOrder, universityEventHandler);
+                this.universityMeter = this.CreateAvailabilityMeter("University");
+                this.PositionInfoControl(this.universityMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
             }
 
             // Set up unemployment controls
             if (CityVitalsWatch.Settings.DisplayEmployment) {
-                var employmentLabel = GameObject.Instantiate<UILabel>(healthPanel.Find<UILabel>("Incinerator"));
+                var employmentLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
                 employmentLabel.localeID = "STATS_9";
                 this.PositionInfoControl(employmentLabel, ref zOrder);
 
-                this.employmentMeter = GameObject.Instantiate<UISlider>(garbagePanel.Find<UISlider>("LandfillMeter"));
-                var employmentTexture = this.employmentMeter.Find<UITextureSprite>("LandfillGradient");
-                employmentTexture.renderMaterial.SetColor("_ColorA", negativeColor);
-                employmentTexture.renderMaterial.SetColor("_ColorB", targetColor);
+                var employmentTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
+                this.employmentMeter = this.CreateGradientMeter("Employment", employmentTexture, negativeColor, targetColor);
                 this.PositionInfoControl(this.employmentMeter, ref zOrder);
             }
         }
@@ -539,6 +417,81 @@
         }
 
         /// <summary>
+        /// Creates a new label and copies the properties of the provided template.
+        /// </summary>
+        /// <param name="templateLabel">The label template.</param>
+        /// <returns>The created label.</returns>
+        private UILabel CreateLabel(UILabel templateLabel) {
+            GameObject labelObject = new GameObject(templateLabel.name);
+            labelObject.transform.parent = this.infoPanel.transform;
+            UILabel label = labelObject.AddComponent<UILabel>();
+            label.font = templateLabel.font;
+            label.textColor = templateLabel.textColor;
+            label.textScale = templateLabel.textScale;
+            label.localeID = templateLabel.localeID;
+            return label;
+        }
+
+        private UISlider CreateAvailabilityMeter(string statName) {
+            GameObject sliderObject = new GameObject(statName + "Meter");
+            sliderObject.transform.parent = this.infoPanel.transform;
+            UISlider slider = sliderObject.AddComponent<UISlider>();
+            slider.width = MeterWidth;
+            slider.height = MeterHeight;
+            slider.backgroundSprite = "MeterBackground";
+            GameObject indicatorObject = new GameObject(statName + "Indicator");
+            indicatorObject.transform.parent = slider.transform;
+            UISprite indicator = indicatorObject.AddComponent<UISprite>();
+            indicator.spriteName = "MeterIndicator";
+            indicator.width = MeterIndicatorSize;
+            indicator.height = MeterIndicatorSize;
+            slider.thumbObject = indicator;
+            return slider;
+        }
+
+        private UISlider CreateGradientMeter(string statName, UITextureSprite gradientTexture, Color colorA, Color colorB) {
+            GameObject sliderObject = new GameObject(statName + "Meter");
+            sliderObject.transform.parent = this.infoPanel.transform;
+            UISlider slider = sliderObject.AddComponent<UISlider>();
+            slider.width = MeterWidth;
+            slider.height = MeterHeight;
+
+            GameObject indicatorObject = new GameObject(statName + "Indicator");
+            indicatorObject.transform.parent = slider.transform;
+            UISprite indicator = indicatorObject.AddComponent<UISprite>();
+            indicator.spriteName = "MeterIndicator";
+            indicator.width = MeterIndicatorSize;
+            indicator.height = MeterIndicatorSize;
+            slider.thumbObject = indicator;
+
+            UITextureSprite gradient = GameObject.Instantiate<UITextureSprite>(gradientTexture);
+            gradient.name = statName + "Gradient";
+            gradient.transform.parent = slider.transform;
+            gradient.transform.localPosition = Vector3.zero;
+            gradient.width = slider.width;
+            gradient.height = slider.height;
+            gradient.renderMaterial.SetColor("_ColorA", colorA);
+            gradient.renderMaterial.SetColor("_ColorB", colorB);
+
+            return slider;
+        }
+
+        /// <summary>
+        /// Creates a click handler delegate that opens the service menu with the specified index.
+        /// </summary>
+        /// <param name="menuIndex">The service menu index to open on click.</param>
+        /// <returns>The created click handler delegate.</returns>
+        private MouseEventHandler CreateServiceMenuClickHandler(int menuIndex) {
+            return delegate(UIComponent component, UIMouseEventParameter eventParam) {
+                UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+
+                if (mainToolstrip != null) {
+                    mainToolstrip.selectedIndex = menuIndex;
+                }
+            };
+        }
+
+        /// <summary>
         /// Called when the toggle button in the main UI is clicked, toggling panel visibility.
         /// </summary>
         /// <param name="component">The toggle button component.</param>
@@ -583,11 +536,7 @@
                 control.width = MeterWidth;
             }
             else if (control is UILabel) {
-                // Reset the locale ID so any changes made to the copied label are reverted
                 var label = control as UILabel;
-                var localeId = label.localeID;
-                label.localeID = string.Empty;
-                label.localeID = localeId;
 
                 // Set the top padding of the label if it's not the first
                 if (zOrder != 1) {
