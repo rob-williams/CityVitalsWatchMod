@@ -72,7 +72,7 @@
             this.height = TitleBarHeight + 10f;
 
             try {
-                SetUpControls();
+                this.SetUpControls();
             }
             catch (Exception e) {
                 // If for some reason control setup threw an exception, destroy the panel instead of staying broken
@@ -123,9 +123,7 @@
         /// </summary>
         private void SetUpControls() {
             this.CreateToggleButton();
-            this.CreateDragHandle();
-            this.CreatePanelButtons();
-
+            
             // Grab the electricity panel now so its title titleFont can be copied and used for this panel's title
             var electricityPanel = this.uiParent.GetComponentInChildren<ElectricityInfoViewPanel>();
             var electricityTitle = electricityPanel.Find<UILabel>("Label");
@@ -135,6 +133,8 @@
             UILabel labelTemplate = electricityPanel.Find<UILabel>("ElectricityAvailability");
 
             this.CreatePanelTitle(titleFont);
+            this.CreateDragHandle();
+            this.CreatePanelButtons();
             this.CreateInfoPanel();
             this.CreateSettingsPanel(titleFont, labelTemplate);
 
@@ -340,6 +340,7 @@
             dragHandle.width = this.width;
             dragHandle.height = TitleBarHeight;
             dragHandle.zOrder = 0;
+            dragHandle.BringToFront();
         }
 
         /// <summary>
