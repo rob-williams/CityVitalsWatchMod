@@ -37,6 +37,7 @@
 
         private UIPanel controlPanel;
         private UICheckBox defaultVisibilityCheckBox;
+        private UICheckBox transparentUnhoveredCheckBox;
         private Dictionary<CityVitalsWatchStat, UICheckBox> statControlMap;
 
         /// <summary>
@@ -61,6 +62,8 @@
             
             this.defaultVisibilityCheckBox = this.CreateSettingsControl(
                 CityVitalsWatch.Settings.DefaultPanelVisibility, "Default Visibility", true, labelTemplate, ref zOrder);
+            this.transparentUnhoveredCheckBox = this.CreateSettingsControl(
+                CityVitalsWatch.Settings.TransparentUnhovered, "Transparent Unhovered", true, labelTemplate, ref zOrder);
 
             this.statControlMap = new Dictionary<CityVitalsWatchStat, UICheckBox>();
 
@@ -204,6 +207,11 @@
 
             if (this.defaultVisibilityCheckBox.isChecked != CityVitalsWatch.Settings.DefaultPanelVisibility) {
                 CityVitalsWatch.Settings.DefaultPanelVisibility = this.defaultVisibilityCheckBox.isChecked;
+                settingsChanged = true;
+            }
+
+            if (this.transparentUnhoveredCheckBox.isChecked != CityVitalsWatch.Settings.TransparentUnhovered) {
+                CityVitalsWatch.Settings.TransparentUnhovered = this.transparentUnhoveredCheckBox.isChecked;
                 settingsChanged = true;
             }
 

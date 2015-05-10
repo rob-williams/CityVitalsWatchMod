@@ -98,8 +98,10 @@
             // Update panel opacity and displayed stats if visible
             if (this.isVisible) {
                 if (this.previousContainsMouse != this.containsMouse) {
+                    float hoveredOpacity = 1f;
+                    float unhoveredOpacity = CityVitalsWatch.Settings.TransparentUnhovered ? 0.4f : 1f;
                     this.previousContainsMouse = this.containsMouse;
-                    this.opacity = this.containsMouse ? 1f : 0.4f;
+                    this.opacity = this.containsMouse ? hoveredOpacity : unhoveredOpacity;
                 }
 
                 this.UpdateDisplay();

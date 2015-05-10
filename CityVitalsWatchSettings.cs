@@ -25,6 +25,11 @@
         public bool DefaultPanelVisibility = true;
 
         /// <summary>
+        /// Indicates whether the panel should be transparent when not hovered by the mouse cursor.
+        /// </summary>
+        public bool TransparentUnhovered = true;
+
+        /// <summary>
         /// Indicates whether electricity availability should be displayed.
         /// </summary>
         public bool DisplayElectricityAvailability = true;
