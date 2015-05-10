@@ -74,12 +74,12 @@
             try {
                 this.SetUpControls();
             }
-            catch (Exception e) {
+            catch {
                 // If for some reason control setup threw an exception, destroy the panel instead of staying broken
                 GameObject.Destroy(this.gameObject);
 
                 // Rethrow the exception to help debug any issues
-                throw e;
+                throw;
             }
         }
 
