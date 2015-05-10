@@ -24,34 +24,79 @@
         /// </summary>
         public bool DefaultPanelVisibility = true;
 
+        /// <summary>
+        /// Indicates whether electricity availability should be displayed.
+        /// </summary>
         public bool DisplayElectricityAvailability = true;
 
+        /// <summary>
+        /// Indicates whether water availability should be displayed.
+        /// </summary>
         public bool DisplayWaterAvailability = true;
 
+        /// <summary>
+        /// Indicates whether sewage treatment should be displayed.
+        /// </summary>
         public bool DisplaySewageTreatment = true;
 
+        /// <summary>
+        /// Indicates whether landfill usage should be displayed.
+        /// </summary>
         public bool DisplayLandfillUsage = true;
 
+        /// <summary>
+        /// Indicates whether incineration status should be displayed.
+        /// </summary>
         public bool DisplayIncinerationStatus = true;
 
+        /// <summary>
+        /// Indicates whether healthcare availability should be displayed.
+        /// </summary>
         public bool DisplayHealthcareAvailability = false;
 
+        /// <summary>
+        /// Indicates whether average health should be displayed.
+        /// </summary>
         public bool DisplayAverageHealth = false;
 
+        /// <summary>
+        /// Indicates whether cemetery usage should be displayed.
+        /// </summary>
         public bool DisplayCemeteryUsage = true;
 
+        /// <summary>
+        /// Indicates whether crematorium availability should be displayed.
+        /// </summary>
         public bool DisplayCrematoriumAvailability = true;
 
+        /// <summary>
+        /// Indicates whether fire hazard should be displayed.
+        /// </summary>
         public bool DisplayFireHazard = false;
 
+        /// <summary>
+        /// Indicates whether crime rate should be displayed.
+        /// </summary>
         public bool DisplayCrimeRate = false;
 
+        /// <summary>
+        /// Indicates whether elementary school availability should be displayed.
+        /// </summary>
         public bool DisplayElementarySchoolAvailability = false;
 
+        /// <summary>
+        /// Indicates whether high school availability should be displayed.
+        /// </summary>
         public bool DisplayHighSchoolAvailability = false;
 
+        /// <summary>
+        /// Indicates whether university availability should be displayed.
+        /// </summary>
         public bool DisplayUniversityAvailability = false;
 
+        /// <summary>
+        /// Indicates whether employment rate should be displayed.
+        /// </summary>
         public bool DisplayEmployment = true;
 
         /// <summary>
@@ -82,6 +127,11 @@
             return resolutionData;
         }
 
+        /// <summary>
+        /// Determines whether the specified stat should be displayed.
+        /// </summary>
+        /// <param name="stat">The stat to check.</param>
+        /// <returns>A value determining whether the specified stat should be displayed.</returns>
         public bool StatDisplayed(CityVitalsWatchStat stat) {
             switch (stat) {
                 case CityVitalsWatchStat.ElectricityAvailability:
@@ -119,6 +169,11 @@
             }
         }
 
+        /// <summary>
+        /// Sets whether the specified stat should be displayed.
+        /// </summary>
+        /// <param name="stat">The stat to set.</param>
+        /// <param name="value">The value indicating whether the specified stat should be displayed.</param>
         public void SetStatDisplayed(CityVitalsWatchStat stat, bool value) {
             switch (stat) {
                 case CityVitalsWatchStat.ElectricityAvailability:
