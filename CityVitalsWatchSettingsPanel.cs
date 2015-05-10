@@ -52,9 +52,9 @@
             this.height = TitleBarHeight + 8f;
             this.width = PanelWidth;
 
+            this.CreatePanelTitle(titleFont);
             this.CreateDragHandle();
             this.CreateCloseButton();
-            this.CreatePanelTitle(titleFont);
             this.CreateControlPanel();
 
             int zOrder = 1;
@@ -81,6 +81,7 @@
             dragHandle.width = this.width;
             dragHandle.height = TitleBarHeight;
             dragHandle.zOrder = 0;
+            dragHandle.BringToFront();
         }
 
         /// <summary>
