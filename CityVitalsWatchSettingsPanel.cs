@@ -1,12 +1,10 @@
 ﻿namespace CityVitalsWatch {
 
     using System;
-    using System.Globalization;
-    using ColossalFramework;
-    using ColossalFramework.UI;
-    using UnityEngine;
     using System.Collections.Generic;
     using System.Linq;
+    using ColossalFramework.UI;
+    using UnityEngine;
 
     /// <summary>
     /// The City Vitals Watch settings panel component.
@@ -26,6 +24,7 @@
             { CityVitalsWatchStat.CrematoriumAvailability, "INFO_HEALTH_CREMATORIUMAVAILABILITY" },
             { CityVitalsWatchStat.FireHazard, "INFO_FIRE_METER" },
             { CityVitalsWatchStat.CrimeRate, "INFO_CRIMERATE_METER" },
+            { CityVitalsWatchStat.JailAvailability, "INFO_CRIME_JAIL_AVAILABILITY" },
             { CityVitalsWatchStat.ElementarySchoolAvailability, "INFO_EDUCATION_AVAILABILITY1" },
             { CityVitalsWatchStat.HighSchoolAvailability, "INFO_EDUCATION_AVAILABILITY2" },
             { CityVitalsWatchStat.UniversityAvailability, "INFO_EDUCATION_AVAILABILITY3" },

@@ -3,9 +3,6 @@
     using ColossalFramework.UI;
     using ICities;
     using UnityEngine;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using System.IO;
 
     /// <summary>
     /// Creates the City Vitals Watch panel when a game is loaded or started.

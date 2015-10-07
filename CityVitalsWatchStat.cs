@@ -15,6 +15,7 @@
         CrematoriumAvailability,
         FireHazard,
         CrimeRate,
+        JailAvailability,
         ElementarySchoolAvailability,
         HighSchoolAvailability,
         UniversityAvailability,

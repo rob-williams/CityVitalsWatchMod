@@ -1,13 +1,7 @@
 ﻿namespace CityVitalsWatch {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml;
-    using System.Xml.Serialization;
     using System.IO;
+    using System.Xml.Serialization;
 
     /// <summary>
     /// Provides methods to load and save <see cref="CityVitalsWatchSettings"/> instances using XML serialization.

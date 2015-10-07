@@ -34,6 +34,7 @@
         private UISlider crematoriumMeter;
         private UISlider fireMeter;
         private UISlider crimeMeter;
+        private UISlider jailMeter;
         private UISlider elementarySchoolMeter;
         private UISlider highSchoolMeter;
         private UISlider universityMeter;
@@ -74,12 +75,12 @@
             try {
                 this.SetUpControls();
             }
-            catch {
+            catch (Exception e) {
                 // If for some reason control setup threw an exception, destroy the panel instead of staying broken
                 GameObject.Destroy(this.gameObject);
 
                 // Rethrow the exception to help debug any issues
-                throw;
+                throw new Exception(e.Message + " - " + e.StackTrace);
             }
         }
 
@@ -262,6 +263,14 @@
                 var crimeTexture = crimePanel.Find<UISlider>("SafetyMeter").Find<UITextureSprite>("SafetyGradient");
                 this.crimeMeter = this.CreateGradientMeter("CrimeRate", crimeTexture, targetColor, negativeColor);
                 this.PositionInfoControl(this.crimeMeter, ref zOrder, this.CreateServiceMenuClickHandler(10));
+            }
+
+            if (CityVitalsWatch.Settings.DisplayJailAvailability) {
+                var jailAvailabilityLabel = this.CreateLabel(crimePanel.Find<UILabel>("JailAvailability"));
+                this.PositionInfoControl(jailAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(10));
+
+                this.jailMeter = this.CreateAvailabilityMeter("Jail");
+                this.PositionInfoControl(this.jailMeter, ref zOrder, this.CreateServiceMenuClickHandler(10));
             }
 
             var educationPanel = this.uiParent.GetComponentInChildren<EducationInfoViewPanel>();
@@ -582,6 +591,9 @@
             int deadCount = 0;
             int fireHazard = 0;
             int crimeRate = 0;
+            int criminalCapacity = 0;
+            int criminalAmount = 0;
+            int extraCriminalAmount = 0;
             int elementarySchoolCapacity = 0;
             int elementarySchoolNeed = 0;
             int highSchoolCapacity = 0;
@@ -610,6 +622,9 @@
                 cremateCapacity = info.GetCremateCapacity();
                 deadCount = info.GetDeadCount();
                 crimeRate = info.m_finalCrimeRate;
+                criminalCapacity = info.GetCriminalCapacity();
+                criminalAmount = info.GetCriminalAmount();
+                extraCriminalAmount = info.GetExtraCriminals();
                 elementarySchoolCapacity = info.GetEducation1Capacity();
                 elementarySchoolNeed = info.GetEducation1Need();
                 highSchoolCapacity = info.GetEducation2Capacity();
@@ -688,6 +703,11 @@
             if (this.crimeMeter != null) {
                 this.crimeMeter.value = crimeRate;
                 this.crimeMeter.tooltip = this.crimeMeter.value + "%";
+            }
+
+            if (this.jailMeter != null) {
+                this.jailMeter.value = this.GetPercentage(criminalCapacity, criminalAmount + extraCriminalAmount);
+                this.jailMeter.tooltip = this.GetUsageString(criminalCapacity, criminalAmount + extraCriminalAmount);
             }
 
             if (this.elementarySchoolMeter != null) {

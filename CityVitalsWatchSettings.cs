@@ -1,13 +1,6 @@
 ﻿namespace CityVitalsWatch {
 
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using System.IO;
 
     /// <summary>
     /// Represents the mod's settings, saved persistently through play sessions.
@@ -83,6 +76,11 @@
         /// Indicates whether crime rate should be displayed.
         /// </summary>
         public bool DisplayCrimeRate = false;
+
+        /// <summary>
+        /// Indicates whether jail availability should be displayed.
+        /// </summary>
+        public bool DisplayJailAvailability = false;
 
         /// <summary>
         /// Indicates whether elementary school availability should be displayed.
@@ -161,6 +159,8 @@
                     return this.DisplayFireHazard;
                 case CityVitalsWatchStat.CrimeRate:
                     return this.DisplayCrimeRate;
+                case CityVitalsWatchStat.JailAvailability:
+                    return this.DisplayJailAvailability;
                 case CityVitalsWatchStat.ElementarySchoolAvailability:
                     return this.DisplayElementarySchoolAvailability;
                 case CityVitalsWatchStat.HighSchoolAvailability:
@@ -213,6 +213,9 @@
                     break;
                 case CityVitalsWatchStat.CrimeRate:
                     this.DisplayCrimeRate = value;
+                    break;
+                case CityVitalsWatchStat.JailAvailability:
+                    this.DisplayJailAvailability = value;
                     break;
                 case CityVitalsWatchStat.ElementarySchoolAvailability:
                     this.DisplayElementarySchoolAvailability = value;
