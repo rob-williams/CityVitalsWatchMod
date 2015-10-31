@@ -12,7 +12,7 @@
         private static CityVitalsWatchPanel Panel = null;
 
         /// <summary>
-        /// Creates the City Vitals Watch panel.
+        /// Loads the mod's settings and creates the City Vitals Watch panel.
         /// </summary>
         public static void CreatePanel() {
             CityVitalsWatch.Settings = CityVitalsWatchSerializer.LoadSettings();
@@ -34,7 +34,7 @@
         }
 
         /// <summary>
-        /// Destroys the City Vitals Watch panel.
+        /// Saves the mod controls' positions to settings and destroys the City Vitals Watch panel.
         /// </summary>
         public static void DestroyPanel() {
             var resolutionData = CityVitalsWatch.Settings.GetResolutionData(Screen.currentResolution.width, Screen.currentResolution.height);
@@ -78,7 +78,7 @@
         }
 
         /// <summary>
-        /// Called when the mod is released. Does nothing.
+        /// Called when the mod is released; does nothing.
         /// </summary>
         public void OnReleased() {
         }

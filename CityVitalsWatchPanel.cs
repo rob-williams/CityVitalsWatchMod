@@ -51,6 +51,7 @@
         /// Called before the first frame after the panel is created.
         /// </summary>
         public override void Start() {
+            // Find the top-level UIView object containing all game controls to copy
             foreach (var uiView in GameObject.FindObjectsOfType<UIView>()) {
                 if (uiView.name == "UIView") {
                     this.uiParent = uiView;
@@ -79,7 +80,7 @@
                 // If for some reason control setup threw an exception, destroy the panel instead of staying broken
                 GameObject.Destroy(this.gameObject);
 
-                // Rethrow the exception to help debug any issues
+                // Rethrow the exception to help debug any issues (Message is not helpful, but StackTrace is)
                 throw new Exception(e.Message + " - " + e.StackTrace);
             }
         }
@@ -135,6 +136,7 @@
             // Grab a label from the electricity panel to use as a template for the settings panel label
             UILabel labelTemplate = electricityPanel.Find<UILabel>("ElectricityAvailability");
 
+            // Create and position all non-stat controls first
             this.CreatePanelTitle(titleFont);
             this.CreateDragHandle();
             this.CreatePanelButtons();
@@ -149,6 +151,7 @@
                 negativeColor = Singleton<InfoManager>.instance.m_properties.m_modeProperties[4].m_negativeColor;
             }
 
+            // zOrder must be manually assigned so the controls are aligned properly by the UI framework
             int zOrder = 1;
 
             // Set up electricity controls
@@ -431,26 +434,34 @@
         /// <summary>
         /// Creates a new label and copies the properties of the provided template.
         /// </summary>
-        /// <param name="templateLabel">The label template.</param>
+        /// <param name="labelTemplate">The label template.</param>
         /// <returns>The created label.</returns>
-        private UILabel CreateLabel(UILabel templateLabel) {
-            GameObject labelObject = new GameObject(templateLabel.name);
+        private UILabel CreateLabel(UILabel labelTemplate) {
+            GameObject labelObject = new GameObject(labelTemplate.name);
             labelObject.transform.parent = this.infoPanel.transform;
             UILabel label = labelObject.AddComponent<UILabel>();
-            label.font = templateLabel.font;
-            label.textColor = templateLabel.textColor;
-            label.textScale = templateLabel.textScale;
-            label.localeID = templateLabel.localeID;
+            label.font = labelTemplate.font;
+            label.textColor = labelTemplate.textColor;
+            label.textScale = labelTemplate.textScale;
+            label.localeID = labelTemplate.localeID;
             return label;
         }
 
+        /// <summary>
+        /// Creates a new availability meter using the standard meter sprite.
+        /// </summary>
+        /// <param name="statName">The name of the meter's stat, used for object naming.</param>
+        /// <returns>The created availability meter.</returns>
         private UISlider CreateAvailabilityMeter(string statName) {
+            // Create the slider
             GameObject sliderObject = new GameObject(statName + "Meter");
             sliderObject.transform.parent = this.infoPanel.transform;
             UISlider slider = sliderObject.AddComponent<UISlider>();
             slider.width = MeterWidth;
             slider.height = MeterHeight;
             slider.backgroundSprite = "MeterBackground";
+
+            // Create the indicator
             GameObject indicatorObject = new GameObject(statName + "Indicator");
             indicatorObject.transform.parent = slider.transform;
             UISprite indicator = indicatorObject.AddComponent<UISprite>();
@@ -458,16 +469,27 @@
             indicator.width = MeterIndicatorSize;
             indicator.height = MeterIndicatorSize;
             slider.thumbObject = indicator;
+
             return slider;
         }
 
+        /// <summary>
+        /// Creates a new gradient meter using the specified meter texture and colors.
+        /// </summary>
+        /// <param name="statName">The name of the meter's stat, used for object naming.</param>
+        /// <param name="gradientTexture">The texture to used for the meter's gradient.</param>
+        /// <param name="colorA">The color to render on the left side of the meter.</param>
+        /// <param name="colorB">The color to render on the right side of the meter.</param>
+        /// <returns>The created gradient meter.</returns>
         private UISlider CreateGradientMeter(string statName, UITextureSprite gradientTexture, Color colorA, Color colorB) {
+            // Create the slider
             GameObject sliderObject = new GameObject(statName + "Meter");
             sliderObject.transform.parent = this.infoPanel.transform;
             UISlider slider = sliderObject.AddComponent<UISlider>();
             slider.width = MeterWidth;
             slider.height = MeterHeight;
 
+            // Create the indicator
             GameObject indicatorObject = new GameObject(statName + "Indicator");
             indicatorObject.transform.parent = slider.transform;
             UISprite indicator = indicatorObject.AddComponent<UISprite>();
@@ -476,6 +498,7 @@
             indicator.height = MeterIndicatorSize;
             slider.thumbObject = indicator;
 
+            // Create the gradient texture and setup how its material is rendered
             UITextureSprite gradient = GameObject.Instantiate<UITextureSprite>(gradientTexture);
             gradient.name = statName + "Gradient";
             gradient.transform.parent = slider.transform;
@@ -602,6 +625,7 @@
             int universityNeed = 0;
             float unemployment = 0f;
 
+            // Grab all of the stat values from the singleton DistrictManager instance
             if (Singleton<DistrictManager>.exists) {
                 var info = Singleton<DistrictManager>.instance.m_districts.m_buffer[0];
                 electricityCapacity = info.GetElectricityCapacity();
@@ -634,22 +658,23 @@
                 unemployment = info.GetUnemployment();
             }
 
+            // Fire hazard is stored in the singleton ImmaterialResourceManager instead
             if (Singleton<ImmaterialResourceManager>.exists) {
                 Singleton<ImmaterialResourceManager>.instance.CheckTotalResource(ImmaterialResourceManager.Resource.FireHazard, out fireHazard);
             }
 
             if (this.electricityMeter != null) {
-                this.electricityMeter.value = this.GetPercentage(electricityCapacity, electricityConsumption);
+                this.electricityMeter.value = this.GetAvailabilityPercentage(electricityCapacity, electricityConsumption);
                 this.electricityMeter.tooltip = this.GetUsageString(electricityCapacity / 1000f, electricityConsumption / 1000f);
             }
 
             if (this.waterMeter != null) {
-                this.waterMeter.value = this.GetPercentage(waterCapacity, waterConsumption);
+                this.waterMeter.value = this.GetAvailabilityPercentage(waterCapacity, waterConsumption);
                 this.waterMeter.tooltip = this.GetUsageString(waterCapacity, waterConsumption);
             }
 
             if (this.sewageMeter != null) {
-                this.sewageMeter.value = this.GetPercentage(sewageCapacity, sewageAccumulation);
+                this.sewageMeter.value = this.GetAvailabilityPercentage(sewageCapacity, sewageAccumulation);
                 this.sewageMeter.tooltip = this.GetUsageString(sewageCapacity, sewageAccumulation);
             }
 
@@ -665,12 +690,12 @@
             }
 
             if (this.incineratorMeter != null) {
-                this.incineratorMeter.value = this.GetPercentage(incinerationCapacity, garbageAccumulation);
+                this.incineratorMeter.value = this.GetAvailabilityPercentage(incinerationCapacity, garbageAccumulation);
                 this.incineratorMeter.tooltip = this.GetUsageString(incinerationCapacity, garbageAccumulation);
             }
 
             if (this.healthcareMeter != null) {
-                this.healthcareMeter.value = this.GetPercentage(healCapacity, sickCount);
+                this.healthcareMeter.value = this.GetAvailabilityPercentage(healCapacity, sickCount);
                 this.healthcareMeter.tooltip = this.GetUsageString(healCapacity, sickCount);
             }
 
@@ -691,7 +716,7 @@
             }
 
             if (this.crematoriumMeter != null) {
-                this.crematoriumMeter.value = this.GetPercentage(cremateCapacity, deadCount);
+                this.crematoriumMeter.value = this.GetAvailabilityPercentage(cremateCapacity, deadCount);
                 this.crematoriumMeter.tooltip = this.GetUsageString(cremateCapacity, deadCount);
             }
 
@@ -706,22 +731,22 @@
             }
 
             if (this.jailMeter != null) {
-                this.jailMeter.value = this.GetPercentage(criminalCapacity, criminalAmount + extraCriminalAmount);
+                this.jailMeter.value = this.GetAvailabilityPercentage(criminalCapacity, criminalAmount + extraCriminalAmount);
                 this.jailMeter.tooltip = this.GetUsageString(criminalCapacity, criminalAmount + extraCriminalAmount);
             }
 
             if (this.elementarySchoolMeter != null) {
-                this.elementarySchoolMeter.value = this.GetPercentage(elementarySchoolCapacity, elementarySchoolNeed);
+                this.elementarySchoolMeter.value = this.GetAvailabilityPercentage(elementarySchoolCapacity, elementarySchoolNeed);
                 this.elementarySchoolMeter.tooltip = this.GetUsageString(elementarySchoolCapacity, elementarySchoolNeed);
             }
 
             if (this.highSchoolMeter != null) {
-                this.highSchoolMeter.value = this.GetPercentage(highSchoolCapacity, highSchoolNeed);
+                this.highSchoolMeter.value = this.GetAvailabilityPercentage(highSchoolCapacity, highSchoolNeed);
                 this.highSchoolMeter.tooltip = this.GetUsageString(highSchoolCapacity, highSchoolNeed);
             }
 
             if (this.universityMeter != null) {
-                this.universityMeter.value = this.GetPercentage(universityCapacity, universityNeed);
+                this.universityMeter.value = this.GetAvailabilityPercentage(universityCapacity, universityNeed);
                 this.universityMeter.tooltip = this.GetUsageString(universityCapacity, universityNeed);
             }
 
@@ -732,12 +757,13 @@
         }
 
         /// <summary>
-        /// Calculates a percentage  based on the specified capacity and consumption values using Cities: Skylines' percentage algorithm.
+        /// Calculates an availability percentage based on the specified capacity and consumption values using
+        /// Cities: Skylines' percentage algorithm.
         /// </summary>
         /// <param name="capacity">The capacity value.</param>
         /// <param name="consumption">The consumption value.</param>
-        /// <returns>The percentage.</returns>
-        private float GetPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
+        /// <returns>The availability percentage.</returns>
+        private float GetAvailabilityPercentage(int capacity, int consumption, int consumptionMin = 45, int consumptionMax = 55) {
             /* This algorithm is what's used by the class InfoViewPanel to determine percentages displayed through the UI.
              * I'm unaware of the reasons for choosing the default values for consumptionMin and consumptionMax, but I
              * wanted to keep the logic consistent with the built-in UI sliders (obviously basePercent is always

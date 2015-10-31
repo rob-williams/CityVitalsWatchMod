@@ -11,6 +11,9 @@
     /// </summary>
     public class CityVitalsWatchSettingsPanel : UIPanel {
 
+        /// <summary>
+        /// Maps a <see cref="CityVitalsWatchStat"/> to the localization ID of the label used for its name.
+        /// </summary>
         private static readonly Dictionary<CityVitalsWatchStat, string> StatLocaleIdMap = new Dictionary<CityVitalsWatchStat, string>
         {
             { CityVitalsWatchStat.ElectricityAvailability, "INFO_ELECTRICITY_AVAILABILITY" },
@@ -146,13 +149,15 @@
         /// <param name="zOrder">The order index of the control used when automatically layout out the control.</param>
         /// <returns>The created check box control.</returns>
         private UICheckBox CreateSettingsControl(bool value, string localeId, bool setRawText, UILabel labelTemplate, ref int zOrder) {
+            // First, create the check box for the setting
             GameObject checkBoxObject = new GameObject("CheckBox" + zOrder);
             checkBoxObject.transform.parent = this.controlPanel.transform;
             UICheckBox checkBox = checkBoxObject.AddComponent<UICheckBox>();
             checkBox.autoSize = true;
             checkBox.zOrder = zOrder;
             zOrder++;
-
+            
+            // Create the sprite displayed when the check box is unchecked and position it within the check box
             GameObject uncheckedObject = new GameObject("Unchecked");
             uncheckedObject.transform.parent = checkBox.transform;
             UISprite uncheckedSprite = uncheckedObject.AddComponent<UISprite>();
@@ -161,6 +166,7 @@
             uncheckedSprite.height = 16f;
             uncheckedSprite.relativePosition = new Vector3(3f, 3f);
 
+            // Create the sprite displayed when the check box is checked and position it within the check box
             GameObject checkedObject = new GameObject("Checked");
             checkedObject.transform.parent = uncheckedSprite.transform;
             UISprite checkedSprite = checkedObject.AddComponent<UISprite>();
@@ -170,6 +176,7 @@
             checkedSprite.relativePosition = Vector3.zero;
             checkBox.checkedBoxObject = checkedSprite;
 
+            // Create the label to display the setting's name and position it within the check box
             GameObject labelObject = new GameObject("Label");
             labelObject.transform.parent = checkBox.transform;
             labelObject.transform.localPosition = Vector3.zero;
@@ -223,7 +230,7 @@
 
             this.isVisible = false;
 
-            // If any settings were changed, re-create the panel
+            // If any settings were changed, recreate the panel
             if (settingsChanged) {
                 CityVitalsWatchLoader.DestroyPanel();
                 CityVitalsWatchLoader.CreatePanel();

@@ -6,12 +6,12 @@
     public class CityVitalsWatchResolution {
 
         /// <summary>
-        /// The width of the screen.
+        /// The width of the screen at this resolution.
         /// </summary>
         public int ScreenWidth;
 
         /// <summary>
-        /// The height of the screen.
+        /// The height of the screen at this resolution.
         /// </summary>
         public int ScreenHeight;
 

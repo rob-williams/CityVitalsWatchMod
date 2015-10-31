@@ -120,6 +120,7 @@
                 }
             }
 
+            // If no resolution data was found, create new default data for the specified resolution
             if (resolutionData == null) {
                 resolutionData = new CityVitalsWatchResolution();
                 resolutionData.ScreenWidth = screenWidth;
