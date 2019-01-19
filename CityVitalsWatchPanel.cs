@@ -636,7 +636,8 @@
             int universityCapacity = 0;
             int universityNeed = 0;
             float unemployment = 0f;
-            float jobAvailability = 0f;
+            int filledJobs = 0;
+            int totalJobs = 0;
 
             // Grab all of the stat values from the singleton DistrictManager instance
             if (Singleton<DistrictManager>.exists) {
@@ -669,7 +670,8 @@
                 universityCapacity = info.GetEducation3Capacity();
                 universityNeed = info.GetEducation3Need();
                 unemployment = info.GetUnemployment();
-                jobAvailability = 100f * info.GetWorkerCount() / info.GetWorkplaceCount();
+                filledJobs = info.GetWorkerCount();
+                totalJobs = info.GetWorkplaceCount();
             }
 
             // Fire hazard is stored in the singleton ImmaterialResourceManager instead
@@ -770,8 +772,9 @@
             }
 
             if (this.jobAvailabilityMeter != null) {
+                float jobAvailability = 100f * filledJobs / totalJobs;
                 this.jobAvailabilityMeter.value = Mathf.Round(100f - jobAvailability);
-                this.jobAvailabilityMeter.tooltip = this.jobAvailabilityMeter.value + "%";
+                this.jobAvailabilityMeter.tooltip = this.GetUsageString(totalJobs, totalJobs - filledJobs); //show available jobs and total jobs
             }
         }
 
