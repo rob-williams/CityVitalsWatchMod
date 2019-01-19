@@ -39,6 +39,7 @@
         private UISlider highSchoolMeter;
         private UISlider universityMeter;
         private UISlider employmentMeter;
+        private UISlider jobAvailabilityMeter;
 
         /// <summary>
         /// The button in the main UI used to toggle the panel's visibility.
@@ -314,6 +315,17 @@
                 var employmentTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
                 this.employmentMeter = this.CreateGradientMeter("Employment", employmentTexture, negativeColor, targetColor);
                 this.PositionInfoControl(this.employmentMeter, ref zOrder);
+            }
+            
+            // Set up job availability controls
+            if (CityVitalsWatch.Settings.DisplayJobAvailability) {
+                var jobAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
+                jobAvailabilityLabel.localeID = "STATS_10";
+                this.PositionInfoControl(jobAvailabilityLabel, ref zOrder);
+
+                var jobAvailabilityTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
+                this.jobAvailabilityMeter = this.CreateGradientMeter("JobAvailability", jobAvailabilityTexture, negativeColor, targetColor);
+                this.PositionInfoControl(this.jobAvailabilityMeter, ref zOrder);
             }
         }
 
@@ -624,6 +636,7 @@
             int universityCapacity = 0;
             int universityNeed = 0;
             float unemployment = 0f;
+            float jobAvailability = 0f;
 
             // Grab all of the stat values from the singleton DistrictManager instance
             if (Singleton<DistrictManager>.exists) {
@@ -656,6 +669,7 @@
                 universityCapacity = info.GetEducation3Capacity();
                 universityNeed = info.GetEducation3Need();
                 unemployment = info.GetUnemployment();
+                jobAvailability = GetJobAvailability(info);
             }
 
             // Fire hazard is stored in the singleton ImmaterialResourceManager instead
@@ -754,6 +768,28 @@
                 this.employmentMeter.value = Mathf.Round(100f - unemployment);
                 this.employmentMeter.tooltip = this.employmentMeter.value + "%";
             }
+            
+            if (this.jobAvailabilityMeter != null) {
+                this.jobAvailabilityMeter.value = Mathf.Round(100f - jobAvailability);
+                this.jobAvailabilityMeter.tooltip = this.jobAvailabilityMeter.value + "%";
+            }
+        }
+
+        // Calculates percentage of jobs available
+        private float GetJobAvailability(District district)
+        {
+            int currentJobs = (int)district.m_commercialData.m_finalAliveCount
+                + (int)district.m_industrialData.m_finalAliveCount
+                + (int)district.m_officeData.m_finalAliveCount
+                + (int)district.m_playerData.m_finalAliveCount;
+
+            int availableJobs = (int)district.m_commercialData.m_finalHomeOrWorkCount
+                + (int)district.m_industrialData.m_finalHomeOrWorkCount
+                + (int)district.m_officeData.m_finalHomeOrWorkCount
+                + (int)district.m_playerData.m_finalHomeOrWorkCount;
+
+            float result = 100f * currentJobs / availableJobs;
+            return result;
         }
 
         /// <summary>
