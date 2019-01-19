@@ -778,7 +778,7 @@
         // Calculates percentage of jobs available
         private float GetJobAvailability(District district)
         {
-            int currentJobs = (int)district.m_commercialData.m_finalAliveCount
+            int currentJobsFilled = (int)district.m_commercialData.m_finalAliveCount
                 + (int)district.m_industrialData.m_finalAliveCount
                 + (int)district.m_officeData.m_finalAliveCount
                 + (int)district.m_playerData.m_finalAliveCount;
@@ -788,7 +788,7 @@
                 + (int)district.m_officeData.m_finalHomeOrWorkCount
                 + (int)district.m_playerData.m_finalHomeOrWorkCount;
 
-            float result = 100f * currentJobs / availableJobs;
+            float result = 100f * currentJobsFilled / availableJobs;
             return result;
         }
 
