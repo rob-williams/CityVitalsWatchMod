@@ -320,7 +320,7 @@
             // Set up job availability controls
             if (CityVitalsWatch.Settings.DisplayJobAvailability) {
                 var jobAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
-                jobAvailabilityLabel.localeID = "JOB_AVAILABILITY";
+                jobAvailabilityLabel.localeID = "STATS_10";
                 this.PositionInfoControl(jobAvailabilityLabel, ref zOrder);
 
                 var jobAvailabilityTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
@@ -775,76 +775,9 @@
             }
         }
 
-        // Calculates Job Availability
+        // Calculates percentage of jobs available
         private float GetJobAvailability(District district)
         {
-            /* NOTES
-             * (page 1/2)
-My English ability is very low.
-The sentence is too long, I do not know exactly what you want to say to me.
-I will reply with what I understood.
-
-1.Acquisition source of each graph data:
-1-1.Workers: (ds=district manager)
-1-1-a1 commercial: ds.m_commercialData.m_finalAliveCount 
-1-1-a2 industrial: ds.m_industrialData.m_finalAliveCount 
-1-1-a3 office: ds.m_officeData.m_finalAliveCount
-1-1-a4 player: ds.m_playerData.m_finalAliveCount 
-1-1-2. a1+a2+a3+a4="People employed"@PopulationInfoViewPanel value
-
-1-2.Workplaces: (ds=district manager)
-1-2-b1 commercial: ds.m_commercialData.m_finalHomeOrWorkCount 
-1-2-b2 industrial: ds.m_industrialData.m_finalHomeOrWorkCount 
-1-2-b3 office: ds.m_officeData.m_finalHomeOrWorkCount
-1-2-b4 player: ds.m_playerData.m_finalHomeOrWorkCount 
-1-2-1. b1+b2+b3+b4= "Jobs available"@PopulationInfoViewPanel value
-
-(page 2/2)
-1-3.office weekly income (em=economy manager)
-1-3-total: em.GetIncomeAndExpenses( ItemClass.Service.Office, ItemClass.SubService.None, ItemClass.Level.None );
-1-3-lv1: total: em.GetIncomeAndExpenses( ItemClass.Service.Office, ItemClass.Sub1-3-Service.None, ItemClass.Level.Level1 );
-1-3-lv2: total: em.GetIncomeAndExpenses( ItemClass.Service.Office, ItemClass.SubService.None, ItemClass.Level.Level2 );
-1-3-lv3: total: em.GetIncomeAndExpenses( ItemClass.Service.Office, ItemClass.SubService.None, ItemClass.Level.Level3 );
-1-3-1. total,lv1-3, same as "Weekly Office Income"@EconomyPanel value
-
-There is no plan to change the sources of these data.
-
-2.BUG
-Commercial workers' values were set for office workers.
-
-3. Employment in tourism and Leisure is missing
-I will add
-
-Thank you.
-
-
-var model = new DistrictInfo
-            {
-                DistrictID = districtID,
-                DistrictName = districtName,
-                TotalPopulationCount = (int)district.m_populationData.m_finalCount,
-                //      PopulationData = GetPopulationGroups(districtID),
-                CurrentHouseholds = (int)district.m_residentialData.m_finalAliveCount,
-                AvailableHouseholds = (int)district.m_residentialData.m_finalHomeOrWorkCount,
-                
-            CurrentJobs = (int)district.m_commercialData.m_finalAliveCount 
-                + (int)district.m_industrialData.m_finalAliveCount 
-                + (int)district.m_officeData.m_finalAliveCount 
-                + (int)district.m_playerData.m_finalAliveCount,
-
-                AvailableJobs = (int)district.m_commercialData.m_finalHomeOrWorkCount 
-                + (int)district.m_industrialData.m_finalHomeOrWorkCount 
-                + (int)district.m_officeData.m_finalHomeOrWorkCount 
-                + (int)district.m_playerData.m_finalHomeOrWorkCount,
-                AverageLandValue = district.GetLandValue(),
-                Pollution = pollution,
-                WeeklyTouristVisits = (int)district.m_tourist1Data.m_averageCount + (int)district.m_tourist2Data.m_averageCount + (int)district.m_tourist3Data.m_averageCount,
-                //    Policies = GetPolicies().ToArray(),
-            };
-            return model;
-
-*/
-
             int currentJobs = (int)district.m_commercialData.m_finalAliveCount
                 + (int)district.m_industrialData.m_finalAliveCount
                 + (int)district.m_officeData.m_finalAliveCount
@@ -855,7 +788,8 @@ var model = new DistrictInfo
                 + (int)district.m_officeData.m_finalHomeOrWorkCount
                 + (int)district.m_playerData.m_finalHomeOrWorkCount;
 
-            return 100f - (currentJobs / availableJobs);
+            float result = 100f * currentJobs / availableJobs;
+            return result;
         }
 
         /// <summary>
