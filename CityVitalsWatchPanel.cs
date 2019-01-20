@@ -327,15 +327,7 @@
                 this.jobAvailabilityMeter = this.CreateGradientMeter("JobAvailability", jobAvailabilityTexture, negativeColor, targetColor);
                 this.PositionInfoControl(this.jobAvailabilityMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Density, InfoManager.SubInfoMode.Default));
             }
-        }
-
-        private MouseEventHandler CreateInfoManagerClickHandler(InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode){
-            return delegate(UIComponent component, UIMouseEventParameter eventParam) {
-                Singleton<InfoManager>.instance.SetCurrentMode(infoMode, subInfoMode);
-            };
-            
-        }
-        
+        }        
 
         /// <summary>
         /// Creates and positions the toggle button in the main UI.
@@ -544,6 +536,29 @@
                     mainToolstrip.selectedIndex = menuIndex;
                 }
             };
+        }
+
+        /// <summary>
+        /// Creates a click handler delegate that opens the information panel with the specified mode and sub mode (sub tab).
+        /// </summary>
+        /// <param name="infoMode">The InfoManager mode to switch to.</param>
+        /// <param name="subInfoMode">The InfoManager sub mode (sub tab) to switch to.</param>
+        /// <returns>The created click handler delegate.</returns>
+        private MouseEventHandler CreateInfoManagerClickHandler(InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode){
+            return delegate(UIComponent component, UIMouseEventParameter eventParam) {
+                UITabstrip mainToolstrip = this.uiParent.FindUIComponent<UITabstrip>("MainToolstrip");
+
+                if (mainToolstrip != null) {
+                    // The index is -1 when nothing is selected.
+                    // Set the index to -1 to clear the main menu selection.
+                    // If you don't clear this first, the info panel that the user is trying to open will be automatically closed
+                    //   and switch the info panel back to the one corresponding to the open build menu.
+                    mainToolstrip.selectedIndex = -1;
+                }
+
+                Singleton<InfoManager>.instance.SetCurrentMode(infoMode, subInfoMode);
+            };
+            
         }
 
         /// <summary>
