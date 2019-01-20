@@ -158,10 +158,10 @@
             // Set up electricity controls
             if (CityVitalsWatch.Settings.DisplayElectricityAvailability) {
                 var electricityAvailabilityLabel = this.CreateLabel(electricityPanel.Find<UILabel>("ElectricityAvailability"));
-                this.PositionInfoControl(electricityAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(4));
+                this.PositionInfoControl(electricityAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Electricity, InfoManager.SubInfoMode.Default));
 
                 this.electricityMeter = this.CreateAvailabilityMeter("Electricity");
-                this.PositionInfoControl(this.electricityMeter, ref zOrder, this.CreateServiceMenuClickHandler(4));
+                this.PositionInfoControl(this.electricityMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Electricity, InfoManager.SubInfoMode.Default));
             }
 
             var waterPanel = this.uiParent.GetComponentInChildren<WaterInfoViewPanel>();
@@ -169,19 +169,19 @@
             // Set up water controls
             if (CityVitalsWatch.Settings.DisplayWaterAvailability) {
                 var waterAvailabilityLabel = this.CreateLabel(waterPanel.Find<UILabel>("WaterAvailability"));
-                this.PositionInfoControl(waterAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(5));
+                this.PositionInfoControl(waterAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Water, InfoManager.SubInfoMode.Default));
 
                 this.waterMeter = this.CreateAvailabilityMeter("Water");
-                this.PositionInfoControl(this.waterMeter, ref zOrder, this.CreateServiceMenuClickHandler(5));
+                this.PositionInfoControl(this.waterMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Water, InfoManager.SubInfoMode.Default));
             }
 
             // Set up sewage controls
             if (CityVitalsWatch.Settings.DisplaySewageTreatment) {
                 var sewageAvailabilityLabel = this.CreateLabel(waterPanel.Find<UILabel>("SewageAvailability"));
-                this.PositionInfoControl(sewageAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(5));
+                this.PositionInfoControl(sewageAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Water, InfoManager.SubInfoMode.Default));
 
                 this.sewageMeter = this.CreateAvailabilityMeter("Sewage");
-                this.PositionInfoControl(this.sewageMeter, ref zOrder, this.CreateServiceMenuClickHandler(5));
+                this.PositionInfoControl(this.sewageMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Water, InfoManager.SubInfoMode.Default));
             }
 
             var garbagePanel = this.uiParent.GetComponentInChildren<GarbageInfoViewPanel>();
@@ -189,20 +189,20 @@
             // Set up landfill controls
             if (CityVitalsWatch.Settings.DisplayLandfillUsage) {
                 var landfillUsageLabel = this.CreateLabel(garbagePanel.Find<UILabel>("LandfillUsage"));
-                this.PositionInfoControl(landfillUsageLabel, ref zOrder, this.CreateServiceMenuClickHandler(6));
+                this.PositionInfoControl(landfillUsageLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Garbage, InfoManager.SubInfoMode.Default));
 
                 var landfillTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
                 this.landfillMeter = this.CreateGradientMeter("Landfill", landfillTexture, targetColor, negativeColor);
-                this.PositionInfoControl(this.landfillMeter, ref zOrder, this.CreateServiceMenuClickHandler(6));
+                this.PositionInfoControl(this.landfillMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Garbage, InfoManager.SubInfoMode.Default));
             }
 
             // Set up incineration controls
             if (CityVitalsWatch.Settings.DisplayIncinerationStatus) {
                 var incinerationStatusLabel = this.CreateLabel(garbagePanel.Find<UILabel>("IncinerationStatus"));
-                this.PositionInfoControl(incinerationStatusLabel, ref zOrder, this.CreateServiceMenuClickHandler(6));
+                this.PositionInfoControl(incinerationStatusLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Garbage, InfoManager.SubInfoMode.Default));
 
                 this.incineratorMeter = this.CreateAvailabilityMeter("Incinerator");
-                this.PositionInfoControl(this.incineratorMeter, ref zOrder, this.CreateServiceMenuClickHandler(6));
+                this.PositionInfoControl(this.incineratorMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Garbage, InfoManager.SubInfoMode.Default));
             }
 
             var healthPanel = this.uiParent.GetComponentInChildren<HealthInfoViewPanel>();
@@ -210,39 +210,39 @@
             // Set up healthcare controls
             if (CityVitalsWatch.Settings.DisplayHealthcareAvailability) {
                 var healthcareAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("HealthcareAvaibility")); // NOTE: CO misspelled this
-                this.PositionInfoControl(healthcareAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(healthcareAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.HealthCare));
 
                 this.healthcareMeter = this.CreateAvailabilityMeter("Healthcare");
-                this.PositionInfoControl(this.healthcareMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(this.healthcareMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.HealthCare));
             }
 
             // Set up average health controls
             if (CityVitalsWatch.Settings.DisplayAverageHealth) {
                 var averageHealthLabel = this.CreateLabel(healthPanel.Find<UILabel>("AvgHealth"));
-                this.PositionInfoControl(averageHealthLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(averageHealthLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.HealthCare));
 
                 var averageHealthTexture = healthPanel.Find<UISlider>("AvgHealthBar").Find<UITextureSprite>("Background");
                 this.averageHealthMeter = this.CreateGradientMeter("AverageHealth", averageHealthTexture, negativeColor, targetColor);
-                this.PositionInfoControl(this.averageHealthMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(this.averageHealthMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.HealthCare));
             }
 
             // Set up cemetery controls
             if (CityVitalsWatch.Settings.DisplayCemeteryUsage) {
                 var cemeteryUsageLabel = this.CreateLabel(healthPanel.Find<UILabel>("CemetaryUsage")); // NOTE: CO misspelled this
-                this.PositionInfoControl(cemeteryUsageLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(cemeteryUsageLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.DeathCare));
 
                 var cemeteryTexture = healthPanel.Find<UISlider>("CemetaryMeter").Find<UITextureSprite>("Background"); // NOTE: CO misspelled this
                 this.cemeteryMeter = this.CreateGradientMeter("Cemetery", cemeteryTexture, targetColor, negativeColor);
-                this.PositionInfoControl(this.cemeteryMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(this.cemeteryMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.DeathCare));
             }
 
             // Set up crematorium controls
             if (CityVitalsWatch.Settings.DisplayCrematoriumAvailability) {
                 var crematoriumAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
-                this.PositionInfoControl(crematoriumAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(crematoriumAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.DeathCare));
 
                 this.crematoriumMeter = this.CreateAvailabilityMeter("Crematorium");
-                this.PositionInfoControl(this.crematoriumMeter, ref zOrder, this.CreateServiceMenuClickHandler(8));
+                this.PositionInfoControl(this.crematoriumMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Health, InfoManager.SubInfoMode.DeathCare));
             }
 
             var firePanel = this.uiParent.GetComponentInChildren<FireSafetyInfoViewPanel>();
@@ -250,11 +250,11 @@
             // Set up fire hazard controls
             if (CityVitalsWatch.Settings.DisplayFireHazard) {
                 var fireHazardLabel = this.CreateLabel(firePanel.Find<UILabel>("SafetyLabel"));
-                this.PositionInfoControl(fireHazardLabel, ref zOrder, this.CreateServiceMenuClickHandler(9));
+                this.PositionInfoControl(fireHazardLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.FireSafety, InfoManager.SubInfoMode.Default));
 
                 var fireTexture = firePanel.Find<UISlider>("SafetyMeter").Find<UITextureSprite>("SafetyGradient");
                 this.fireMeter = this.CreateGradientMeter("FireHazard", fireTexture, targetColor, negativeColor);
-                this.PositionInfoControl(fireMeter, ref zOrder, this.CreateServiceMenuClickHandler(9));
+                this.PositionInfoControl(fireMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.FireSafety, InfoManager.SubInfoMode.Default));
             }
 
             var crimePanel = this.uiParent.GetComponentInChildren<CrimeInfoViewPanel>();
@@ -262,19 +262,19 @@
             // Set up crime controls
             if (CityVitalsWatch.Settings.DisplayCrimeRate) {
                 var crimeRateLabel = this.CreateLabel(crimePanel.Find<UILabel>("SafetyLabel"));
-                this.PositionInfoControl(crimeRateLabel, ref zOrder, this.CreateServiceMenuClickHandler(10));
+                this.PositionInfoControl(crimeRateLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.CrimeRate, InfoManager.SubInfoMode.Default));
 
                 var crimeTexture = crimePanel.Find<UISlider>("SafetyMeter").Find<UITextureSprite>("SafetyGradient");
                 this.crimeMeter = this.CreateGradientMeter("CrimeRate", crimeTexture, targetColor, negativeColor);
-                this.PositionInfoControl(this.crimeMeter, ref zOrder, this.CreateServiceMenuClickHandler(10));
+                this.PositionInfoControl(this.crimeMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.CrimeRate, InfoManager.SubInfoMode.Default));
             }
 
             if (CityVitalsWatch.Settings.DisplayJailAvailability) {
                 var jailAvailabilityLabel = this.CreateLabel(crimePanel.Find<UILabel>("JailAvailability"));
-                this.PositionInfoControl(jailAvailabilityLabel, ref zOrder, this.CreateServiceMenuClickHandler(10));
+                this.PositionInfoControl(jailAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.CrimeRate, InfoManager.SubInfoMode.Default));
 
                 this.jailMeter = this.CreateAvailabilityMeter("Jail");
-                this.PositionInfoControl(this.jailMeter, ref zOrder, this.CreateServiceMenuClickHandler(10));
+                this.PositionInfoControl(this.jailMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.CrimeRate, InfoManager.SubInfoMode.Default));
             }
 
             var educationPanel = this.uiParent.GetComponentInChildren<EducationInfoViewPanel>();
@@ -282,52 +282,60 @@
             // Set up elementary school controls
             if (CityVitalsWatch.Settings.DisplayElementarySchoolAvailability) {
                 var elementarySchoolLabel = this.CreateLabel(educationPanel.Find<UILabel>("ElementaryAvailability"));
-                this.PositionInfoControl(elementarySchoolLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(elementarySchoolLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.ElementarySchool));
 
                 this.elementarySchoolMeter = this.CreateAvailabilityMeter("ElementarySchool");
-                this.PositionInfoControl(this.elementarySchoolMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(this.elementarySchoolMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.ElementarySchool));
             }
 
             // Set up high school controls
             if (CityVitalsWatch.Settings.DisplayHighSchoolAvailability) {
                 var highSchoolLabel = this.CreateLabel(educationPanel.Find<UILabel>("HighAvailability"));
-                this.PositionInfoControl(highSchoolLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(highSchoolLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.HighSchool));
 
                 this.highSchoolMeter = this.CreateAvailabilityMeter("HighSchool");
-                this.PositionInfoControl(this.highSchoolMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(this.highSchoolMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.HighSchool));
             }
 
             // Set up university controls
             if (CityVitalsWatch.Settings.DisplayUniversityAvailability) {
                 var universityLabel = this.CreateLabel(educationPanel.Find<UILabel>("UnivAvailability"));
-                this.PositionInfoControl(universityLabel, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(universityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.University));
 
                 this.universityMeter = this.CreateAvailabilityMeter("University");
-                this.PositionInfoControl(this.universityMeter, ref zOrder, this.CreateServiceMenuClickHandler(12));
+                this.PositionInfoControl(this.universityMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Education, InfoManager.SubInfoMode.University));
             }
 
             // Set up unemployment controls
             if (CityVitalsWatch.Settings.DisplayEmployment) {
                 var employmentLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
                 employmentLabel.localeID = "STATS_9";
-                this.PositionInfoControl(employmentLabel, ref zOrder);
+                this.PositionInfoControl(employmentLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Density, InfoManager.SubInfoMode.Default));
 
                 var employmentTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
                 this.employmentMeter = this.CreateGradientMeter("Employment", employmentTexture, negativeColor, targetColor);
-                this.PositionInfoControl(this.employmentMeter, ref zOrder);
+                this.PositionInfoControl(this.employmentMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Density, InfoManager.SubInfoMode.Default));
             }
 
             // Set up job availability controls
             if (CityVitalsWatch.Settings.DisplayJobAvailability) {
                 var jobAvailabilityLabel = this.CreateLabel(healthPanel.Find<UILabel>("Incinerator"));
                 jobAvailabilityLabel.localeID = "STATS_10";
-                this.PositionInfoControl(jobAvailabilityLabel, ref zOrder);
+                this.PositionInfoControl(jobAvailabilityLabel, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Density, InfoManager.SubInfoMode.Default));
 
                 var jobAvailabilityTexture = garbagePanel.Find<UISlider>("LandfillMeter").Find<UITextureSprite>("LandfillGradient");
                 this.jobAvailabilityMeter = this.CreateGradientMeter("JobAvailability", jobAvailabilityTexture, negativeColor, targetColor);
-                this.PositionInfoControl(this.jobAvailabilityMeter, ref zOrder);
+                this.PositionInfoControl(this.jobAvailabilityMeter, ref zOrder, this.CreateInfoManagerClickHandler(InfoManager.InfoMode.Density, InfoManager.SubInfoMode.Default));
             }
         }
+
+        private MouseEventHandler CreateInfoManagerClickHandler(InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode){
+            return delegate(UIComponent component, UIMouseEventParameter eventParam) {
+                Singleton<InfoManager>.instance.SetCurrentMode(infoMode, subInfoMode);
+            };
+            
+        }
+        
 
         /// <summary>
         /// Creates and positions the toggle button in the main UI.
