@@ -103,6 +103,11 @@
         public bool DisplayEmployment = true;
 
         /// <summary>
+        /// Indicates whether job availability should be displayed.
+        /// </summary>
+        public bool DisplayJobAvailability = false;
+
+        /// <summary>
         /// Returns the <see cref="CityVitalsWatchResolution"/> instance corresponding to the specified screen width and height.
         /// </summary>
         /// <param name="screenWidth">The width of the screen.</param>
@@ -170,6 +175,8 @@
                     return this.DisplayUniversityAvailability;
                 case CityVitalsWatchStat.Employment:
                     return this.DisplayEmployment;
+                case CityVitalsWatchStat.JobAvailability:
+                    return this.DisplayJobAvailability;
                 default:
                     return false;
             }
@@ -229,6 +236,9 @@
                     break;
                 case CityVitalsWatchStat.Employment:
                     this.DisplayEmployment = value;
+                    break;
+                case CityVitalsWatchStat.JobAvailability:
+                    this.DisplayJobAvailability = value;
                     break;
             }
         }

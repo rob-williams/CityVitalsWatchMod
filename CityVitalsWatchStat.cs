@@ -20,5 +20,6 @@
         HighSchoolAvailability,
         UniversityAvailability,
         Employment,
+        JobAvailability,
     }
 }

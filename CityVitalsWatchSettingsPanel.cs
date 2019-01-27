@@ -32,6 +32,7 @@
             { CityVitalsWatchStat.HighSchoolAvailability, "INFO_EDUCATION_AVAILABILITY2" },
             { CityVitalsWatchStat.UniversityAvailability, "INFO_EDUCATION_AVAILABILITY3" },
             { CityVitalsWatchStat.Employment, "STATS_9" },
+            { CityVitalsWatchStat.JobAvailability, "STATS_10" },
         };
 
         private static readonly float PanelWidth = 215f;
