@@ -105,7 +105,7 @@
         /// <summary>
         /// Indicates whether job availability should be displayed.
         /// </summary>
-        public bool DisplayJobAvailability = true;
+        public bool DisplayJobAvailability = false;
 
         /// <summary>
         /// Returns the <see cref="CityVitalsWatchResolution"/> instance corresponding to the specified screen width and height.
